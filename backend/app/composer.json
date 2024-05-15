@@ -1,6 +1,8 @@
 {
     "type": "project",
     "license": "proprietary",
+    "name": "tagnotes/1.0.0",
+    "description": "backend for tagnotes app",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
