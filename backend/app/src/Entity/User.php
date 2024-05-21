@@ -6,7 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`users`')]
+#[ORM\Table(name: '`user`')]
 class User
 {
     #[ORM\Id]
@@ -14,7 +14,7 @@ class User
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
