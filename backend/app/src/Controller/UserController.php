@@ -24,8 +24,8 @@ class UserController extends AbstractController
         return $this->json($userRepository->findAll());
     }
 
-    #[Route('/api/user', name: 'post_user', methods: ['POST'])]
-    public function createUser(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/api/signup', name: 'signup', methods: ['POST'])]
+    public function signUp(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
             $data = json_decode($request->getContent(), true);
@@ -39,7 +39,7 @@ class UserController extends AbstractController
 
             $data = [
                 'status' => 200,
-                'success' => "Post added successfully",
+                'success' => "User added successfully",
             ];
             return new JsonResponse($data);
         } catch (\Exception $e){
