@@ -12,14 +12,14 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class ApiLoginController extends AbstractController
 {
-    #[Route('/api/login', name: 'login', methods: ['POST'])]
+    #[Route('/api/login', name: 'api_login', methods: ['POST'])]
     public function index(#[CurrentUser] ?User $user): JsonResponse
     {
-        if (null == $user) {
+        if (null === $user) {
             return $this->json(['message' => 'missing credentials'], Response::HTTP_UNAUTHORIZED);
         }
 
-        $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+        $token = new UsernamePasswordToken($user, null, $user->getRoles());
         return $this->json(['token' => $token], Response::HTTP_OK);
     }
 }

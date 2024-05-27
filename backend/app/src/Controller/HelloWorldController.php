@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class HelloWorldController extends AbstractController
 {
 
-    #[Route('/api/helloworld')]
+    #[Route('/api/helloworld', name: 'helloworld')]
     public function helloWorld(): Response
     {
         return new Response('<http> Hello World! </http>');
