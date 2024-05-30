@@ -22,5 +22,13 @@ jobs:
       - name: Deploy to server
         run: |
           echo "Starting deployment..."
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no andrey@31.128.37.60 "cd /home/andrey/TagNotes && git pull origin $GITHUB_HEAD_REF && cd backend/app && composer update && composer install && cd .. && docker compose up -d"
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no andrey@31.128.37.60 "\
+            cd /home/andrey/TagNotes \
+            && git pull origin $GITHUB_HEAD_REF \
+            && cd backend/app \
+            && composer update \
+            && composer install \
+            && cd .. \
+            && docker compose down \
+            && docker compose up -d"
           echo "Deployment completed."
