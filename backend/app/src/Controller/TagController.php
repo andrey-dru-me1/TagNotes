@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\NoteTag;
 use App\Entity\Tag;
+use App\Repository\NoteTagRepository;
 use App\Repository\TagRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,6 +15,16 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class TagController extends AbstractController
 {
+
+    #[Route('/api/tag/{id}/notes', name: 'list_tag_notes', methods: ['GET'])]
+    public function listTagNotes(int $id, NoteTagRepository $noteTagRepository): JsonResponse
+    {
+        $noteTags = $noteTagRepository->findBy(['tag' => $id]);
+        $tags = array_map(function (NoteTag $noteTag) {
+            return $noteTag->getNote();
+        }, $noteTags);
+        return $this->json($tags, Response::HTTP_OK);
+    }
 
     #[Route('/api/tags', name: 'list_tags', methods: ['GET'])]
     public function listTags(TagRepository $tagRepository): JsonResponse
@@ -46,6 +58,27 @@ class TagController extends AbstractController
             }
 
             $entityManager->persist($tag);
+            $entityManager->flush();
+
+            return $this->json($tag, Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return $this->json("$e", Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    #[Route('/api/tag/{id}', name: 'delete_tag', methods: ['DELETE'])]
+    public function deleteTag(
+        int $id,
+        TagRepository $tagRepository,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        try {
+            $tag = $tagRepository->find($id);
+            if (null === $tag) {
+                return $this->json("Tag with id '$id' not found.", Response::HTTP_NOT_FOUND);
+            }
+
+            $entityManager->remove($tag);
             $entityManager->flush();
 
             return $this->json($tag, Response::HTTP_OK);
