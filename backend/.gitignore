@@ -1,0 +1,2 @@
+# Ignore directory where database data is located
+data/
