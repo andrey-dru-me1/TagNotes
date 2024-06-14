@@ -26,6 +26,10 @@ jobs:
             cd /home/andrey/TagNotes \
             && git pull origin $GITHUB_HEAD_REF \
             && composer -d backend install \
+            && cd frontend \
+            && npm install \
+            && npm run build \
+            && cd .. \
             && docker compose down \
             && docker compose up -d"
           echo "Deployment completed."
