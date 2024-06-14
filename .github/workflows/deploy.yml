@@ -25,7 +25,7 @@ jobs:
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no andrey@31.128.37.60 "\
             cd /home/andrey/TagNotes \
             && git pull origin $GITHUB_HEAD_REF \
-            && cd backend/app \
+            && cd backend \
             && composer update \
             && composer install \
             && cd .. \
