@@ -3,13 +3,18 @@ services:
     image: nginx:latest
     container_name: tagnotes_nginx
     ports:
-      - "80:80"
+      - 80:80
     volumes:
       - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./backend/public:/var/www/html/public
     links:
-      - fpm
       - react
+      - fpm
+  react:
+    build: frontend
+    container_name: tagnotes_react
+    volumes:
+      - ./frontend:/root/tagnotes_react
   fpm:
     build: backend
     container_name: tagnotes_fpm
@@ -24,13 +29,5 @@ services:
       PGDATA: /var/lib/postgresql/data
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
-    ports:
-      - 5432:5432
     volumes:
       - ./data:/var/lib/postgresql/data
-  react:
-    build: frontend
-    container_name: tagnotes_react
-    volumes:
-      - ./frontend:/root/tagnotes_react
-
