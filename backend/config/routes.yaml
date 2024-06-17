@@ -3,8 +3,8 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
-api_login_check:
-    path: /api/login_check
+api_login:
+    path: /api/login
 app.swagger_ui:
     path: /api/doc
     methods: GET
