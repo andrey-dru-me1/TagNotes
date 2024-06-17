@@ -19,13 +19,13 @@ export default function LoginPage() {
         }).then((response => console.log(response))).catch(e => console.log(e));
     }
 
-    return <Box alignItems="center" justifyContent="center">
-        <Stack spacing={2} alignItems="center">
+    return <Box alignItems="center" justifyContent="center" height="100vh">
+        <Stack spacing={2} alignItems="center" justifyContent="center" height="100vh">
             <TextField label="Username" type={"text"} placeholder="Username" variant="outlined" required={true}
                        onChange={(t) => setUsername(t.target.value)}/>
             <TextField label="Password" type={"password"} placeholder="Password" variant="outlined" required={true}
                        onChange={(t) => setPassword(t.target.value)}/>
             <Button variant="contained" color="primary" type="submit" onClick={handleClick}>Login</Button>
         </Stack>
-    </Box>
+    </Box>;
 }
