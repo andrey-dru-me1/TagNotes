@@ -1,7 +1,7 @@
 'use client'
 
 import axios from "axios";
-import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
+import {useEffect, useState} from "react";
 
 interface Note {
     id: number,
@@ -9,20 +9,24 @@ interface Note {
     content: string,
 }
 
-const queryClient = new QueryClient();
 
-export default function WrapperNotes() {
-    return <QueryClientProvider client={queryClient}>
-        <Notes/>
-    </QueryClientProvider>
-}
+export default function Notes() {
+    const [isLoading , setIsLoading] = useState(true);
+    const[isError, setIsError] = useState(false);
+    const[data, setData] = useState<Note[]>([]);
 
-function Notes() {
-    const getNotes = async () => {
-        const response = await axios.get<Note[]>("http://tagnotes/api/notes");
-        return response.data;
-    };
-    const {isLoading, isError, data} = useQuery<Note[], Error>("notes", getNotes)
+    useEffect( () => {
+        axios.get<Note[]>("http://tagnotes/api/notes").then( (response) => {
+            setIsLoading(false);
+            const payload :Note[] = response.data;
+            setData(payload);
+        }
+        ).catch( err => {
+            console.log(err);
+            setIsError(true);
+        }
+        );
+    }, []);
 
     if (isLoading) {
         return <div>Loading...</div>
@@ -30,12 +34,6 @@ function Notes() {
     if (isError) {
         return <div>Error!</div>
     }
-
-    if (data === null || data === undefined) {
-        return <div>Not Found!</div>
-    }
-
-    console.log(data);
 
     return <ul>
         {data?.map((note) => (<li key={note.id}>
