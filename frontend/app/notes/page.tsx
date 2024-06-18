@@ -6,7 +6,7 @@ import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 interface Note {
     id: number,
     title: string,
-    contents: string,
+    content: string,
 }
 
 const queryClient = new QueryClient();
@@ -38,6 +38,9 @@ function Notes() {
     console.log(data);
 
     return <ul>
-        {data?.map((note) => (<li key={note.id}>{note.title}</li>))}
+        {data?.map((note) => (<li key={note.id}>
+            <div style={{fontWeight: 700}}>{note.title}</div>
+            <div>{note.content}</div>
+        </li>))}
     </ul>
 }
