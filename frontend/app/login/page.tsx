@@ -17,6 +17,7 @@ export default function LoginPage() {
             data: {"name": username, "password": password},
             headers: {"Content-Type": "application/json"},
         }).then((response => console.log(response))).catch(e => console.log(e));
+        window.location.href = '/api/doc';
     }
 
     return <Box alignItems="center" justifyContent="center" height="100vh">
