@@ -99,11 +99,7 @@ class TagController extends AbstractController
             $entityManager->persist($tag);
             $entityManager->flush();
 
-            $data = [
-                'status' => Response::HTTP_OK,
-                'success' => 'Tag created'
-            ];
-            return new JsonResponse($data);
+            return $this->json($tag, Response::HTTP_CREATED);
         } catch (\Exception $e) {
             $data = [
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
