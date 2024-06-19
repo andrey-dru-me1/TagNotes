@@ -1,6 +1,6 @@
 'use client'
 
-import {Box, TextField} from "@mui/material";
+import {Box, Link, TextField} from "@mui/material";
 import {Stack} from "@mui/material";
 import {Button} from "@mui/material";
 import {useState} from "react";
@@ -16,7 +16,7 @@ export default function LoginPage() {
             url: "http://tagnotes/api/login",
             data: {"name": username, "password": password},
             headers: {"Content-Type": "application/json"},
-        }).then((response) => window.location.href = '/notes').catch(e => console.log(e));
+        }).then(() => window.location.href = '/notes').catch(e => console.log(e));
     }
 
     return <Box alignItems="center" justifyContent="center" height="100vh">
@@ -26,6 +26,7 @@ export default function LoginPage() {
             <TextField label="Password" type={"password"} placeholder="Password" variant="outlined" required={true}
                        onChange={(t) => setPassword(t.target.value)}/>
             <Button variant="contained" color="primary" type="submit" onClick={handleClick}>Login</Button>
+            <Link href={'/signup'}>Sign up</Link>
         </Stack>
     </Box>;
 }

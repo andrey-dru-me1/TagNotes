@@ -1,6 +1,6 @@
 'use client'
 
-import {Box, TextField} from "@mui/material";
+import {Box, Link, TextField} from "@mui/material";
 import {Stack} from "@mui/material";
 import {Button} from "@mui/material";
 import {useState} from "react";
@@ -31,6 +31,7 @@ export default function SignupPage() {
             <TextField label="Password" type={"password"} placeholder="Password" variant="outlined" required={true}
                        onChange={(t) => setPassword(t.target.value)}/>
             <Button variant="contained" color="primary" type="submit" onClick={handleClick}>Sign up</Button>
+            <Link href={'/login'}>Login</Link>
         </Stack>
     </Box>;
 }
