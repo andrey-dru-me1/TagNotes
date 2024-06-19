@@ -16,8 +16,7 @@ export default function LoginPage() {
             url: "http://tagnotes/api/login",
             data: {"name": username, "password": password},
             headers: {"Content-Type": "application/json"},
-        }).then((response => console.log(response))).catch(e => console.log(e));
-        window.location.href = '/api/doc';
+        }).then((response) => window.location.href = '/notes').catch(e => console.log(e));
     }
 
     return <Box alignItems="center" justifyContent="center" height="100vh">
