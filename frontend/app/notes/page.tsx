@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import {useEffect, useState} from "react";
-import {Box, MenuItem, Select, SelectChangeEvent} from "@mui/material";
+import {Box, Link, MenuItem, Select, SelectChangeEvent} from "@mui/material";
 
 interface Note {
     id: number,
@@ -11,9 +11,13 @@ interface Note {
 }
 
 function NoteCard(props: { note: Note }) {
+
     return <Box key={props.note.id} margin={2} padding={1} height={70} width={700}
-                sx={{backgroundColor: "lightgray", borderRadius: 2}}>
-        <Box fontSize={26} sx={{fontWeight: 'bold'}}>{props.note.title}</Box>
+                sx={{backgroundColor: "lightgray", borderRadius: 2, input: {cursor: 'pointer'}}}>
+        <Box fontSize={26} sx={{fontWeight: 'bold'}}>
+            {props.note.title}
+            <Link fontSize={14} sx={{fontWeight: 'normal'}} href={`/note/${props.note.id}`}> Edit</Link>
+        </Box>
     </Box>
 }
 
@@ -27,7 +31,10 @@ function NotesView(props: { notes: Note[] }) {
 function NoteElement(props: { note: Note }) {
     const {note} = props;
     return <Box key={note.id} width={500}>
-        <Box fontSize={26} sx={{fontWeight: 'bold'}}>{note.title}</Box>
+        <Box fontSize={26} sx={{fontWeight: 'bold'}}>
+            {note.title}
+            <Link fontSize={14} sx={{fontWeight: 'normal'}} href={`/note/${props.note.id}`}> Edit</Link>
+        </Box>
         <Box>{note.content}</Box>
     </Box>
 }
@@ -81,7 +88,7 @@ export default function Notes() {
             <MenuItem value={NoteView.Notes}>Notes</MenuItem>
             <MenuItem value={NoteView.OneNote}>OneNote</MenuItem>
         </Select>
-        { view == NoteView.Notes && <NotesView notes={data}/> }
-        { view == NoteView.OneNote && <OneNoteView notes={data}/> }
+        {view == NoteView.Notes && <NotesView notes={data}/>}
+        {view == NoteView.OneNote && <OneNoteView notes={data}/>}
     </Box>
 }

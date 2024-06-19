@@ -2,7 +2,7 @@
 
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {Box, Button, TextField} from "@mui/material";
+import {Box, Button, Link, TextField} from "@mui/material";
 
 interface Note {
     id: number,
@@ -43,9 +43,12 @@ export default function NoteEdit({params: {noteId}}: { params: { noteId: number 
         }
     }
 
-    return <Box padding={5} width={700} sx={{borderRadius: 3, backgroundColor: 'lightgray'}}>
-        <TextField fullWidth={true} defaultValue={note?.title} onChange={onTitleChange}/>
-        <TextField multiline fullWidth={true} defaultValue={note?.content} onChange={onContentChange}/>
-        <Button variant={'outlined'} onClick={onSaveClick}>Save</Button>
+    return <Box>
+        <Link href={'/notes'}>Back</Link>
+        <Box padding={5} width={700} sx={{borderRadius: 3, backgroundColor: 'lightgray'}}>
+            <TextField fullWidth={true} defaultValue={note?.title} onChange={onTitleChange}/>
+            <TextField multiline fullWidth={true} defaultValue={note?.content} onChange={onContentChange}/>
+            <Button variant={'outlined'} onClick={onSaveClick}>Save</Button>
+        </Box>
     </Box>
 }
