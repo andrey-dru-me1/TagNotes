@@ -2,7 +2,8 @@
 
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {Box, Button, Link, TextField} from "@mui/material";
+import {Box, Button, Link, Modal, TextField} from "@mui/material";
+import TagAppender from "@/lib/features/tagAppender/TagAppender";
 
 interface Note {
     id: number,
@@ -12,6 +13,10 @@ interface Note {
 
 export default function NoteEdit({params: {noteId}}: { params: { noteId: number } }) {
     const [note, setNote] = useState<Note | null>(null);
+    const [tagsModalOpen, setTagsModalOpen] = useState(false);
+
+    const handleTagsModalOpen = () => setTagsModalOpen(true);
+    const handleTagsModalClose = () => setTagsModalOpen(false);
 
     useEffect(() => {
         axios.get(`http://tagnotes/api/note/${noteId}`).then((response) => {
@@ -48,6 +53,8 @@ export default function NoteEdit({params: {noteId}}: { params: { noteId: number 
         <Box padding={5} width={700} sx={{borderRadius: 3, backgroundColor: 'lightgray'}}>
             <TextField fullWidth={true} defaultValue={note?.title} onChange={onTitleChange}/>
             <TextField multiline fullWidth={true} defaultValue={note?.content} onChange={onContentChange}/>
+            <Button size={"small"} onClick={handleTagsModalOpen}>Edit Tags</Button>
+            <Modal open={tagsModalOpen} onClose={handleTagsModalClose}><TagAppender note={note}/></Modal>
             <Button variant={'outlined'} onClick={onSaveClick}>Save</Button>
         </Box>
     </Box>
