@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import {useEffect, useState} from "react";
-import {Box} from "@mui/material";
+import {Box, MenuItem, Select, SelectChangeEvent} from "@mui/material";
 
 interface Note {
     id: number,
@@ -10,21 +10,43 @@ interface Note {
     content: string,
 }
 
-interface NoteCardProps {
-    note: Note,
-}
-
-function NoteCard(props: NoteCardProps) {
-    return <Box key={props.note.id} margin={2} padding={1} height={70} sx={{backgroundColor: "lightgray", borderRadius: 2}}>
+function NoteCard(props: { note: Note }) {
+    return <Box key={props.note.id} margin={2} padding={1} height={70} width={700}
+                sx={{backgroundColor: "lightgray", borderRadius: 2}}>
         <Box fontSize={26} sx={{fontWeight: 'bold'}}>{props.note.title}</Box>
     </Box>
 }
+
+function NotesView(props: { notes: Note[] }) {
+    const {notes} = props;
+    return <ul>
+        {notes?.map((note) => (<NoteCard key={note.id} note={note}/>))}
+    </ul>
+}
+
+function NoteElement(props: { note: Note }) {
+    const {note} = props;
+    return <Box key={note.id} width={500}>
+        <Box fontSize={26} sx={{fontWeight: 'bold'}}>{note.title}</Box>
+        <Box>{note.content}</Box>
+    </Box>
+}
+
+function OneNoteView(props: { notes: Note[] }) {
+    const {notes} = props;
+    return <ul>
+        {notes.map((note) => (<NoteElement key={note.id} note={note}/>))}
+    </ul>
+}
+
+enum NoteView {Notes, OneNote}
 
 
 export default function Notes() {
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
     const [data, setData] = useState<Note[]>([]);
+    const [view, setView] = useState<NoteView>(NoteView.Notes);
 
     useEffect(() => {
         axios.get<Note[]>("http://tagnotes/api/notes").then((response) => {
@@ -47,7 +69,19 @@ export default function Notes() {
         return <div>Error!</div>
     }
 
-    return <ul>
-        {data?.map((note) => (<NoteCard key={note.id} note={note}/>))}
-    </ul>
+    const handleChange = (event: SelectChangeEvent<NoteView>) => {
+        const {target: {value}} = event;
+        if (typeof value !== 'string') {
+            setView(value);
+        }
+    }
+
+    return <Box>
+        <Select onChange={handleChange} value={view}>
+            <MenuItem value={NoteView.Notes}>Notes</MenuItem>
+            <MenuItem value={NoteView.OneNote}>OneNote</MenuItem>
+        </Select>
+        { view == NoteView.Notes && <NotesView notes={data}/> }
+        { view == NoteView.OneNote && <OneNoteView notes={data}/> }
+    </Box>
 }
