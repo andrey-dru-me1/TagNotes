@@ -1,8 +1,8 @@
 "use client";
 
+import api from "@/lib/features/api/api";
 import TagAppender from "@/lib/features/tagAppender/TagAppender";
 import { Box, Button, Divider, Link, Stack, TextField } from "@mui/material";
-import axios from "axios";
 import { useEffect, useState } from "react";
 
 interface Note {
@@ -23,7 +23,7 @@ export default function NoteEdit({
 }) {
   const [note, setNote] = useState<Note | null>(null);
   useEffect(() => {
-    axios.get(`http://tagnotes/api/note/${noteId}`).then((response) => {
+    api.get(`http://tagnotes/api/note/${noteId}`).then((response) => {
       const payload = response.data;
       setNote(payload);
     });
@@ -44,7 +44,7 @@ export default function NoteEdit({
   const onSaveClick = () => {
     console.log("Clicked");
     if (note) {
-      axios
+      api
         .post(`http://tagnotes/api/note/${noteId}`, note, {
           headers: { "Content-Type": "application/json" },
         })
