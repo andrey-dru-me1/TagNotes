@@ -78,7 +78,15 @@ export default function NoteEdit({
         <Button size={"small"} onClick={handleTagsModalOpen}>
           Edit Tags
         </Button>
-        <Modal open={tagsModalOpen} onClose={handleTagsModalClose}>
+        <Modal
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          open={tagsModalOpen}
+          onClose={handleTagsModalClose}
+        >
           <TagAppender note={note} />
         </Modal>
         <Button variant={"outlined"} onClick={onSaveClick}>
