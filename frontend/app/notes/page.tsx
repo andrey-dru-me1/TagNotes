@@ -52,7 +52,7 @@ function NoteCard(props: { note: Note }) {
       <Box
         fontSize={32}
         padding={1}
-        sx={{ fontWeight: "bold", borderRadius: 4, border: 4, width: 1 }}
+        sx={{ fontWeight: "bold", borderRadius: 3, border: 3, width: 1 }}
         display={"flex"}
         justifyContent={"space-between"}
       >
