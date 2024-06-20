@@ -1,5 +1,6 @@
 "use client";
 
+import { Delete, Edit } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -30,27 +31,28 @@ function NoteCard(props: { note: Note }) {
       height={70}
       width={700}
       sx={{
-        backgroundColor: "lightgray",
-        borderRadius: 2,
-        input: { cursor: "pointer" },
+        borderRadius: 4,
+        border: 4,
       }}
     >
-      <Box fontSize={26} sx={{ fontWeight: "bold" }}>
+      <Box
+        fontSize={26}
+        display={"flex"}
+        justifyContent={"space-between"}
+        sx={{ fontWeight: "bold" }}
+      >
         {props.note.title}
-        <Link
-          fontSize={14}
-          sx={{ fontWeight: "normal" }}
-          href={`/note/${props.note.id}`}
-        >
-          {" "}
-          Edit
-        </Link>
-        <Button
-          size={"small"}
-          onClick={() => onDeleteButtonClick(props.note.id)}
-        >
-          Del
-        </Button>
+        <Box>
+          <Button href={`/note/${props.note.id}`}>
+            <Edit fontSize="small" />
+          </Button>
+          <Button
+            size={"small"}
+            onClick={() => onDeleteButtonClick(props.note.id)}
+          >
+            <Delete fontSize="small" />
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
