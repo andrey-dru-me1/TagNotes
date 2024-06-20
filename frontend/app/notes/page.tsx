@@ -1,13 +1,18 @@
 "use client";
 
+import api from "@/lib/features/api/api";
 import { Delete, Edit } from "@mui/icons-material";
 import {
   Box,
   Button,
+  Chip,
+  Container,
+  Grid,
   Link,
   MenuItem,
   Select,
   SelectChangeEvent,
+  Stack,
 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -18,43 +23,66 @@ interface Note {
   content: string;
 }
 
+interface Tag {
+  id: number;
+  name: string;
+}
+
 function onDeleteButtonClick(noteId: number) {
   axios.delete(`/api/note/${noteId}`).then(() => window.location.reload());
 }
 
 function NoteCard(props: { note: Note }) {
+  const [tags, setTags] = useState<Tag[]>([]);
+
+  const updateTags = () => {
+    api
+      .get(`/note/${props.note.id}/tags`)
+      .then((response) => {
+        const payload = response.data;
+        setTags(payload);
+      })
+      .catch((e) => console.log(e));
+  };
+
+  useEffect(updateTags, []);
+
   return (
-    <Box
-      key={props.note.id}
-      marginY={2}
-      padding={1}
-      height={70}
-      width={700}
-      sx={{
-        borderRadius: 4,
-        border: 4,
-      }}
-    >
+    <Stack direction={"row"} key={props.note.id} marginY={2} width={1000}>
       <Box
-        fontSize={26}
+        fontSize={32}
+        padding={1}
+        sx={{ fontWeight: "bold", borderRadius: 4, border: 4, width: 1 }}
         display={"flex"}
         justifyContent={"space-between"}
-        sx={{ fontWeight: "bold" }}
       >
-        {props.note.title}
-        <Box>
-          <Button href={`/note/${props.note.id}`}>
-            <Edit fontSize="small" />
-          </Button>
-          <Button
-            size={"small"}
-            onClick={() => onDeleteButtonClick(props.note.id)}
-          >
-            <Delete fontSize="small" />
-          </Button>
-        </Box>
+        <Container>{props.note.title}</Container>
+        <Grid
+          marginTop={-1}
+          justifyContent={"right"}
+          container
+          gridRow={2}
+          spacing={0}
+        >
+          {tags.map((tag: Tag) => (
+            <Box marginX={0.5} marginY={-0.5}>
+              <Chip size="small" label={tag.name} />{" "}
+            </Box>
+          ))}
+        </Grid>
       </Box>
-    </Box>
+      <Stack direction={"row"}>
+        <Button href={`/note/${props.note.id}`}>
+          <Edit fontSize="small" />
+        </Button>
+        <Button
+          size={"small"}
+          onClick={() => onDeleteButtonClick(props.note.id)}
+        >
+          <Delete fontSize="small" />
+        </Button>
+      </Stack>
+    </Stack>
   );
 }
 
@@ -118,8 +146,8 @@ export default function Notes() {
   const [view, setView] = useState<NoteView>(NoteView.Notes);
 
   useEffect(() => {
-    axios
-      .get<Note[]>("http://tagnotes/api/notes")
+    api
+      .get<Note[]>("/notes")
       .then((response) => {
         setIsLoading(false);
         const payload: Note[] = response.data;
@@ -149,8 +177,8 @@ export default function Notes() {
   };
 
   const onAddNoteClick = () => {
-    axios
-      .post("http://tagnotes/api/note", { title: "Untitled", content: "" })
+    api
+      .post("/note", { title: "Untitled", content: "" })
       .then((response) => {
         console.log(response);
         const note: Note = response.data;
