@@ -1,55 +1,73 @@
-import {useEffect, useState} from "react";
+import { Box, Button, MenuItem, Select } from "@mui/material";
 import axios from "axios";
-import {Box, Button, TextField} from "@mui/material";
+import { useEffect, useState } from "react";
 
 interface Note {
-    id: number,
-    title: string,
-    content: string,
+  id: number;
+  title: string;
+  content: string;
 }
 
 interface Tag {
-    id: number,
-    name: string,
+  id: number;
+  name: string;
 }
 
-export default function TagAppender({note}: { note: Note | null }) {
-    const [tags, setTags] = useState<Tag[]>([]);
-    const [newTagName, setNewTagName] = useState("");
+export default function TagAppender({ note }: { note: Note | null }) {
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [newTagId, setNewTagId] = useState<string>("");
+  const [possibleTags, setPossibleTags] = useState<Tag[]>([]);
 
-    const updateTags = () => {
-        axios.get(`http://tagnotes/api/note/${note?.id}/tags`).then((response) => {
-            const payload = response.data;
-            setTags(payload);
-        })
-    }
+  const updateTags = () => {
+    axios.get(`http://tagnotes/api/note/${note?.id}/tags`).then((response) => {
+      const payload = response.data;
+      setTags(payload);
+    });
+  };
 
-    useEffect(updateTags, []);
+  const getPossibleTags = () => {
+    axios.get("http://tagnotes/api/tags").then((response) => {
+      const payload = response.data;
+      setPossibleTags(payload);
+    });
+  };
 
-    const onDelClick = (tagId: number) => {
-        axios.delete(`http://tagnotes/api/note/${note?.id}/tag/${tagId}`, {})
-            .then(updateTags)
-    }
+  useEffect(updateTags, []);
+  useEffect(getPossibleTags, []);
 
-    const onAddClick = () => {
-        axios.post(`http://tagnotes/api/tag`, {name: newTagName}, {})
-            .then((response) => {
-                    const tag = response.data;
-                    axios.post(`http://tagnotes/api/note/${note?.id}/tag/${tag.id}`)
-                        .then(updateTags)
-                        .catch((e)=>console.log(e))
-                }
-            )
-            .catch((e)=>console.log(e))
-    }
+  const onDelClick = (tagId: number) => {
+    axios
+      .delete(`http://tagnotes/api/note/${note?.id}/tag/${tagId}`, {})
+      .then(updateTags);
+  };
 
-    const onChange = ({target: {value}}: { target: { value: string } }) => {
-        setNewTagName(value)
-    }
+  const onAddClick = () => {
+    axios
+      .post(`http://tagnotes/api/note/${note?.id}/tag/${newTagId}`)
+      .then(updateTags)
+      .catch((e) => console.log(e));
+  };
 
-    return <Box bgcolor={'white'} height={200} width={400} padding={3} sx={{borderRadius: 3}}>
-        {tags.map(tag => <Box fontSize={20}>{tag.name} <Button onClick={() => onDelClick(tag.id)}>Del</Button></Box>)}
-        <TextField onChange={onChange}></TextField>
-        <Button onClick={onAddClick}>Add tag</Button>
+  const onChange = ({ target: { value } }: { target: { value: string } }) => {
+    setNewTagId(value);
+  };
+
+  return (
+    <Box bgcolor={"white"} padding={3} sx={{ borderRadius: 3 }}>
+      {tags.map((tag) => (
+        <Box fontSize={20}>
+          {tag.name} <Button onClick={() => onDelClick(tag.id)}>Del</Button>
+        </Box>
+      ))}
+      <Select sx={{ minWidth: 200 }} onChange={onChange} value={newTagId}>
+        <MenuItem value="">
+          <em>None</em>
+        </MenuItem>
+        {possibleTags.map((tag: Tag) => (
+          <MenuItem value={tag.id}>{tag.name}</MenuItem>
+        ))}
+      </Select>
+      <Button onClick={onAddClick}>Add tag</Button>
     </Box>
+  );
 }
