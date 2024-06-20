@@ -16,7 +16,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class NoteController extends AbstractController
 {
-
     #[Route('/api/note/{noteId}/tag/{tagId}', name: 'remove_tag', methods: ['DELETE'])]
     public function removeTag(
         int $noteId,
@@ -153,11 +152,7 @@ class NoteController extends AbstractController
             $entityManager->persist($note);
             $entityManager->flush();
 
-            $data = [
-                'status' => Response::HTTP_OK,
-                'success' => 'Note created'
-            ];
-            return new JsonResponse($data);
+            return $this->json($note);
         } catch (\Exception $e) {
             $data = [
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
