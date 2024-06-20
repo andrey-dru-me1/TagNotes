@@ -1,7 +1,7 @@
 "use client";
 
 import TagAppender from "@/lib/features/tagAppender/TagAppender";
-import { Box, Button, Link, Modal, TextField } from "@mui/material";
+import { Box, Button, Divider, Link, Stack, TextField } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -11,17 +11,17 @@ interface Note {
   content: string;
 }
 
+interface Tag {
+  id: number;
+  name: string;
+}
+
 export default function NoteEdit({
   params: { noteId },
 }: {
   params: { noteId: number };
 }) {
   const [note, setNote] = useState<Note | null>(null);
-  const [tagsModalOpen, setTagsModalOpen] = useState(false);
-
-  const handleTagsModalOpen = () => setTagsModalOpen(true);
-  const handleTagsModalClose = () => setTagsModalOpen(false);
-
   useEffect(() => {
     axios.get(`http://tagnotes/api/note/${noteId}`).then((response) => {
       const payload = response.data;
@@ -59,40 +59,31 @@ export default function NoteEdit({
   return (
     <Box>
       <Link href={"/notes"}>Back</Link>
-      <Box
-        padding={5}
-        width={700}
-        sx={{ borderRadius: 3, backgroundColor: "lightgray" }}
+      <Stack
+        margin={2}
+        padding={2}
+        direction={"row"}
+        sx={{ borderRadius: 8, border: 4 }}
       >
-        <TextField
-          fullWidth={true}
-          defaultValue={note?.title}
-          onChange={onTitleChange}
-        />
-        <TextField
-          multiline
-          fullWidth={true}
-          defaultValue={note?.content}
-          onChange={onContentChange}
-        />
-        <Button size={"small"} onClick={handleTagsModalOpen}>
-          Edit Tags
-        </Button>
-        <Modal
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          open={tagsModalOpen}
-          onClose={handleTagsModalClose}
-        >
-          <TagAppender note={note} />
-        </Modal>
-        <Button variant={"outlined"} onClick={onSaveClick}>
-          Save
-        </Button>
-      </Box>
+        <Box width={700} margin={2}>
+          <TextField
+            fullWidth
+            defaultValue={note?.title}
+            onChange={onTitleChange}
+          />
+          <TextField
+            multiline
+            fullWidth
+            defaultValue={note?.content}
+            onChange={onContentChange}
+          />
+          <Button variant={"outlined"} onClick={onSaveClick}>
+            Save
+          </Button>
+        </Box>
+        <Divider orientation="vertical" flexItem />
+        {note !== null && <TagAppender note={note} />}
+      </Stack>
     </Box>
   );
 }
