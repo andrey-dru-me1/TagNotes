@@ -19,17 +19,23 @@ export default function TagAppender({ note }: { note: Note | null }) {
   const [possibleTags, setPossibleTags] = useState<Tag[]>([]);
 
   const updateTags = () => {
-    axios.get(`http://tagnotes/api/note/${note?.id}/tags`).then((response) => {
-      const payload = response.data;
-      setTags(payload);
-    });
+    axios
+      .get(`http://tagnotes/api/note/${note?.id}/tags`)
+      .then((response) => {
+        const payload = response.data;
+        setTags(payload);
+      })
+      .catch((e) => console.log(e));
   };
 
   const getPossibleTags = () => {
-    axios.get("http://tagnotes/api/tags").then((response) => {
-      const payload = response.data;
-      setPossibleTags(payload);
-    });
+    axios
+      .get("http://tagnotes/api/tags")
+      .then((response) => {
+        const payload = response.data;
+        setPossibleTags(payload);
+      })
+      .catch((e) => console.log(e));
   };
 
   useEffect(updateTags, []);
@@ -53,7 +59,7 @@ export default function TagAppender({ note }: { note: Note | null }) {
   };
 
   return (
-    <Box bgcolor={"white"} padding={3} sx={{ borderRadius: 3 }}>
+    <Box padding={3}>
       {tags.map((tag) => (
         <Box fontSize={20}>
           {tag.name} <Button onClick={() => onDelClick(tag.id)}>Del</Button>
