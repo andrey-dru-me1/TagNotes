@@ -1,5 +1,5 @@
+import api from "@/lib/features/api/api";
 import { Box, Button, MenuItem, Select } from "@mui/material";
-import axios from "axios";
 import { useEffect, useState } from "react";
 
 interface Note {
@@ -19,7 +19,7 @@ export default function TagAppender({ note }: { note: Note | null }) {
   const [possibleTags, setPossibleTags] = useState<Tag[]>([]);
 
   const updateTags = () => {
-    axios
+    api
       .get(`/note/${note?.id}/tags`)
       .then((response) => {
         const payload = response.data;
@@ -29,7 +29,7 @@ export default function TagAppender({ note }: { note: Note | null }) {
   };
 
   const getPossibleTags = () => {
-    axios
+    api
       .get("/tags")
       .then((response) => {
         const payload = response.data;
@@ -42,11 +42,11 @@ export default function TagAppender({ note }: { note: Note | null }) {
   useEffect(getPossibleTags, []);
 
   const onDelClick = (tagId: number) => {
-    axios.delete(`/note/${note?.id}/tag/${tagId}`, {}).then(updateTags);
+    api.delete(`/note/${note?.id}/tag/${tagId}`, {}).then(updateTags);
   };
 
   const onAddClick = () => {
-    axios
+    api
       .post(`/note/${note?.id}/tag/${newTagId}`)
       .then(updateTags)
       .catch((e) => console.log(e));
