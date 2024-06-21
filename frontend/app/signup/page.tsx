@@ -11,14 +11,14 @@ export default function SignupPage() {
   const handleClick = () => {
     axios({
       method: "post",
-      url: "http://tagnotes/api/signup",
+      url: "/api/signup",
       data: { name: username, password: password },
       headers: { "Content-Type": "application/json" },
     })
       .then(() =>
         axios({
           method: "post",
-          url: "http://tagnotes/api/login",
+          url: "/api/login",
           data: { name: username, password: password },
           headers: { "Content-Type": "application/json" },
         }).then(() => (window.location.href = "/notes"))

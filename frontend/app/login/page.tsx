@@ -11,7 +11,7 @@ export default function LoginPage() {
   const handleClick = () => {
     axios({
       method: "post",
-      url: "http://tagnotes/api/login",
+      url: "/api/login",
       data: { name: username, password: password },
       headers: { "Content-Type": "application/json" },
     })
