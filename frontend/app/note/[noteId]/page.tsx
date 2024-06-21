@@ -23,7 +23,7 @@ export default function NoteEdit({
 }) {
   const [note, setNote] = useState<Note | null>(null);
   useEffect(() => {
-    api.get(`http://tagnotes/api/note/${noteId}`).then((response) => {
+    api.get(`/note/${noteId}`).then((response) => {
       const payload = response.data;
       setNote(payload);
     });
@@ -45,7 +45,7 @@ export default function NoteEdit({
     console.log("Clicked");
     if (note) {
       api
-        .post(`http://tagnotes/api/note/${noteId}`, note, {
+        .post(`/note/${noteId}`, note, {
           headers: { "Content-Type": "application/json" },
         })
         .then((response) => {

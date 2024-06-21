@@ -20,7 +20,7 @@ export default function TagAppender({ note }: { note: Note | null }) {
 
   const updateTags = () => {
     axios
-      .get(`http://tagnotes/api/note/${note?.id}/tags`)
+      .get(`/note/${note?.id}/tags`)
       .then((response) => {
         const payload = response.data;
         setTags(payload);
@@ -30,7 +30,7 @@ export default function TagAppender({ note }: { note: Note | null }) {
 
   const getPossibleTags = () => {
     axios
-      .get("http://tagnotes/api/tags")
+      .get("/tags")
       .then((response) => {
         const payload = response.data;
         setPossibleTags(payload);
@@ -42,14 +42,12 @@ export default function TagAppender({ note }: { note: Note | null }) {
   useEffect(getPossibleTags, []);
 
   const onDelClick = (tagId: number) => {
-    axios
-      .delete(`http://tagnotes/api/note/${note?.id}/tag/${tagId}`, {})
-      .then(updateTags);
+    axios.delete(`/note/${note?.id}/tag/${tagId}`, {}).then(updateTags);
   };
 
   const onAddClick = () => {
     axios
-      .post(`http://tagnotes/api/note/${note?.id}/tag/${newTagId}`)
+      .post(`/note/${note?.id}/tag/${newTagId}`)
       .then(updateTags)
       .catch((e) => console.log(e));
   };
