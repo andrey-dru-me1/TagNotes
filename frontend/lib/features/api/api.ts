@@ -9,9 +9,13 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      await axios.post("/api/token/refresh");
-      return axios(originalRequest);
+      try {
+        originalRequest._retry = true;
+        await axios.post("/api/token/refresh");
+        return axios(originalRequest);
+      } catch (e) {
+        window.location.href = "/login";
+      }
     }
   }
 );
