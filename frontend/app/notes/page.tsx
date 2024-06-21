@@ -51,6 +51,7 @@ function NoteCard(props: { note: Note }) {
     <Stack direction={"row"} key={props.note.id} marginY={2} width={1000}>
       <Box
         fontSize={32}
+        fontFamily={"sans-serif"}
         padding={1}
         sx={{ fontWeight: "bold", borderRadius: 3, border: 3, width: 1 }}
         display={"flex"}
