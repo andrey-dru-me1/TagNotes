@@ -54,7 +54,11 @@ export default function NoteCard(props: { note: Note }) {
           ))}
         </Grid>
       </Link>
-      <Button size={"small"} onClick={() => onDeleteButtonClick(props.note.id)}>
+      <Button
+        sx={{ color: "lightgray" }}
+        size={"small"}
+        onClick={() => onDeleteButtonClick(props.note.id)}
+      >
         <Delete fontSize="small" />
       </Button>
     </Stack>
