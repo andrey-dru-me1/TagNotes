@@ -59,7 +59,7 @@ export default function TagAppender({ note }: { note: Note | null }) {
   return (
     <Box padding={3}>
       {tags.map((tag) => (
-        <Box fontSize={20}>
+        <Box key={tag.id} fontSize={20}>
           {tag.name} <Button onClick={() => onDelClick(tag.id)}>Del</Button>
         </Box>
       ))}
@@ -68,7 +68,9 @@ export default function TagAppender({ note }: { note: Note | null }) {
           <em>None</em>
         </MenuItem>
         {possibleTags.map((tag: Tag) => (
-          <MenuItem value={tag.id}>{tag.name}</MenuItem>
+          <MenuItem key={tag.id} value={tag.id}>
+            {tag.name}
+          </MenuItem>
         ))}
       </Select>
       <Button onClick={onAddClick}>Add tag</Button>

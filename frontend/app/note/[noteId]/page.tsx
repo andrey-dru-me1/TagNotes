@@ -11,11 +11,6 @@ interface Note {
   content: string;
 }
 
-interface Tag {
-  id: number;
-  name: string;
-}
-
 export default function NoteEdit({
   params: { noteId },
 }: {

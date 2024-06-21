@@ -65,7 +65,7 @@ function NoteCard(props: { note: Note }) {
           spacing={0}
         >
           {tags.map((tag: Tag) => (
-            <Box marginX={0.5} marginY={-0.5}>
+            <Box key={tag.id} marginX={0.5} marginY={-0.5}>
               <Chip size="small" label={tag.name} />{" "}
             </Box>
           ))}
