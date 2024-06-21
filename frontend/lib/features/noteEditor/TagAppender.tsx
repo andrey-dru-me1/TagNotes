@@ -1,17 +1,8 @@
 import api from "@/lib/features/api/api";
+import Note from "@/lib/interfaces/Note";
+import Tag from "@/lib/interfaces/Tag";
 import { Box, Button, MenuItem, Select } from "@mui/material";
 import { useEffect, useState } from "react";
-
-interface Note {
-  id: number;
-  title: string;
-  content: string;
-}
-
-interface Tag {
-  id: number;
-  name: string;
-}
 
 export default function TagAppender({ note }: { note: Note | null }) {
   const [tags, setTags] = useState<Tag[]>([]);
