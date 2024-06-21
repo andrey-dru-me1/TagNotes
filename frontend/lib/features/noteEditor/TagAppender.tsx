@@ -1,6 +1,6 @@
 import api from "@/lib/features/api/api";
-import Note from "@/lib/interfaces/Note";
-import Tag from "@/lib/interfaces/Tag";
+import Note from "@/lib/types/Note";
+import Tag from "@/lib/types/Tag";
 import { Box, Button, MenuItem, Select } from "@mui/material";
 import { useEffect, useState } from "react";
 

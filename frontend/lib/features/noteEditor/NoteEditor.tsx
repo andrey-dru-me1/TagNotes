@@ -2,11 +2,11 @@
 
 import api from "@/lib/features/api/api";
 import TagAppender from "@/lib/features/noteEditor/TagAppender";
-import Note from "@/lib/interfaces/Note";
+import Note from "@/lib/types/Note";
 import { Box, Button, Divider, Link, Stack, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 
-export default function NoteEditorComponent({ noteId }: { noteId: number }) {
+export default function NoteEditor({ noteId }: { noteId: number }) {
   const [note, setNote] = useState<Note | null>(null);
   useEffect(() => {
     api.get(`/note/${noteId}`).then((response) => {
