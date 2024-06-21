@@ -1,9 +1,9 @@
 name: Deployment Workflow
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
   workflow_dispatch:
 
 jobs:
@@ -24,8 +24,10 @@ jobs:
           echo "Starting deployment..."
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no andrey@31.128.37.60 "\
             cd /home/andrey/TagNotes \
-            && git pull origin $GITHUB_HEAD_REF \
+            && git checkout ${{ github.ref_name }} \
+            && git pull \
             && composer -d backend install \
+            && npm --prefix ./frontend install \
             && docker compose down \
             && docker compose up -d"
           echo "Deployment completed."
