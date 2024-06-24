@@ -17,7 +17,7 @@ export default function NoteElement(props: { note: Note }) {
           Del
         </Button>
       </Box>
-      <Box>{note.content}</Box>
+      <Box whiteSpace={"pre-line"}>{note.content}</Box>
     </Box>
   );
 }
