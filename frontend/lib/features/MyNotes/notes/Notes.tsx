@@ -1,23 +1,18 @@
 "use client";
 
 import api from "@/lib/features/api/api";
-import NotesView from "@/lib/features/notes/notesView/NotesView";
-import OneNoteView from "@/lib/features/notes/oneNoteView/OneNoteView";
+import NotesView from "@/lib/features/MyNotes/notes/notesView/NotesView";
+import OneNoteView from "@/lib/features/MyNotes/notes/oneNoteView/OneNoteView";
+import { useAppSelector } from "@/lib/hooks";
 import Note from "@/lib/types/Note";
 import NoteView from "@/lib/types/NoteView";
-import {
-  Box,
-  Button,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-} from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 
 export default function NotesComponent() {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<Note[]>([]);
-  const [view, setView] = useState<NoteView>(NoteView.Notes);
+  const noteView = useAppSelector((state) => state.myNotes.noteView);
 
   useEffect(() => {
     api.get<Note[]>("/notes").then((response) => {
@@ -30,15 +25,6 @@ export default function NotesComponent() {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-
-  const handleChange = (event: SelectChangeEvent<NoteView>) => {
-    const {
-      target: { value },
-    } = event;
-    if (typeof value !== "string") {
-      setView(value);
-    }
-  };
 
   const onAddNoteClick = () => {
     api
@@ -55,12 +41,8 @@ export default function NotesComponent() {
 
   return (
     <Box padding={2}>
-      <Select onChange={handleChange} value={view}>
-        <MenuItem value={NoteView.Notes}>Notes</MenuItem>
-        <MenuItem value={NoteView.OneNote}>OneNote</MenuItem>
-      </Select>
-      {view == NoteView.Notes && <NotesView notes={data} />}
-      {view == NoteView.OneNote && <OneNoteView notes={data} />}
+      {noteView == NoteView.Notes && <NotesView notes={data} />}
+      {noteView == NoteView.OneNote && <OneNoteView notes={data} />}
       <Button onClick={onAddNoteClick}>Add Note</Button>
     </Box>
   );

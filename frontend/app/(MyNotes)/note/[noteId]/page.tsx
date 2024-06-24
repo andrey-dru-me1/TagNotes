@@ -1,4 +1,4 @@
-import NoteEditor from "@/lib/features/noteEditor/NoteEditor";
+import NoteEditor from "@/lib/features/MyNotes/noteEditor/NoteEditor";
 
 export default function NoteEditorPage({
   params: { noteId },

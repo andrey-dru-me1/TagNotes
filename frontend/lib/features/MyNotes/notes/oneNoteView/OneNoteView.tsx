@@ -1,4 +1,4 @@
-import NoteElement from "@/lib/features/notes/oneNoteView/NoteElement";
+import NoteElement from "@/lib/features/MyNotes/notes/oneNoteView/NoteElement";
 import Note from "@/lib/types/Note";
 
 export default function OneNoteView(props: { notes: Note[] }) {

@@ -1,4 +1,4 @@
-import { onDeleteButtonClick } from "@/lib/features/notes/buttonHandler";
+import { onDeleteButtonClick } from "@/lib/features/MyNotes/notes/buttonHandler";
 import Note from "@/lib/types/Note";
 import { Box, Button } from "@mui/material";
 import Link from "next/link";

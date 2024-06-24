@@ -1,5 +1,5 @@
 import api from "@/lib/features/api/api";
-import { onDeleteButtonClick } from "@/lib/features/notes/buttonHandler";
+import { onDeleteButtonClick } from "@/lib/features/MyNotes/notes/buttonHandler";
 import Note from "@/lib/types/Note";
 import Tag from "@/lib/types/Tag";
 import { Delete } from "@mui/icons-material";

@@ -1,4 +1,4 @@
-import NoteCard from "@/lib/features/notes/notesView/NoteCard";
+import NoteCard from "@/lib/features/MyNotes/notes/notesView/NoteCard";
 import Note from "@/lib/types/Note";
 import { Box } from "@mui/material";
 
