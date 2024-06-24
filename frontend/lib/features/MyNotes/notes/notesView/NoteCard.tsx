@@ -22,7 +22,13 @@ export default function NoteCard(props: { note: Note }) {
   useEffect(updateTags, []);
 
   return (
-    <Stack direction={"row"} key={props.note.id} marginY={2} width={1000}>
+    <Stack
+      direction={"row"}
+      key={props.note.id}
+      marginY={2}
+      width={1000}
+      minHeight={70}
+    >
       <Link
         fontSize={32}
         fontFamily={"sans-serif"}
@@ -40,13 +46,7 @@ export default function NoteCard(props: { note: Note }) {
         justifyContent={"space-between"}
       >
         <Container>{props.note.title}</Container>
-        <Grid
-          marginTop={-1}
-          justifyContent={"right"}
-          container
-          gridRow={2}
-          spacing={0}
-        >
+        <Grid marginTop={-1} justifyContent={"flex-end"} height={0} container>
           {tags.map((tag: Tag) => (
             <Box key={tag.id} marginX={0.5} marginY={-0.5}>
               <Chip size="small" label={tag.name} />{" "}
