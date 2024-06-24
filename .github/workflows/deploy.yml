@@ -26,6 +26,7 @@ jobs:
           echo "Starting deployment..."
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no andrey@31.128.37.60 "\
             cd /home/andrey/TagNotes \
+            && git checkout . \
             && git checkout $BRANCH_NAME \
             && git pull \
             && composer -d backend install \
