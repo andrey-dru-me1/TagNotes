@@ -16,6 +16,16 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class NoteController extends AbstractController
 {
+
+    #[Route('/api/notes/filter', name: 'filter', methods: ['POST'])]
+    public function filterNotes(Request $request, NoteRepository $noteRepository, NoteTagRepository $noteTagRepository)
+    {
+        $tagIds = json_decode($request->getContent(), true);
+        $noteIds = $noteTagRepository->findNoteIdsByTagIds($tagIds);
+        $notes = $noteRepository->findByIds($noteIds);
+        return $this->json($notes);
+    }
+
     #[Route('/api/note/{noteId}/tag/{tagId}', name: 'remove_tag', methods: ['DELETE'])]
     public function removeTag(
         int $noteId,
