@@ -1,9 +1,10 @@
 import api from "@/lib/features/api/api";
+import TagGrid from "@/lib/features/MyNotes/common/TagGrid";
 import { onDeleteButtonClick } from "@/lib/features/MyNotes/notes/buttonHandler";
 import Note from "@/lib/types/Note";
 import Tag from "@/lib/types/Tag";
 import { Delete } from "@mui/icons-material";
-import { Box, Button, Chip, Container, Grid, Link, Stack } from "@mui/material";
+import { Box, Button, Link, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 
 export default function NoteCard(props: { note: Note }) {
@@ -30,37 +31,41 @@ export default function NoteCard(props: { note: Note }) {
       minHeight={70}
     >
       <Link
-        fontSize={32}
         fontFamily={"sans-serif"}
         color={"inherit"}
         underline="none"
-        padding={1}
         href={`/note/${props.note.id}`}
         sx={{
-          fontWeight: "bold",
           borderRadius: 3,
           border: 3,
           width: 1,
         }}
-        display={"flex"}
-        justifyContent={"space-between"}
       >
-        <Container>{props.note.title}</Container>
-        <Grid marginTop={-1} justifyContent={"flex-end"} height={0} container>
-          {tags.map((tag: Tag) => (
-            <Box key={tag.id} marginX={0.5} marginY={-0.5}>
-              <Chip size="small" label={tag.name} />{" "}
-            </Box>
-          ))}
-        </Grid>
+        <Stack direction={"row"}>
+          <Box
+            padding={1}
+            fontSize={32}
+            width={"100%"}
+            sx={{
+              fontWeight: "bold",
+            }}
+          >
+            {props.note.title}
+          </Box>
+          <Box padding={0.5}>
+            <TagGrid tags={tags} justifyContent="right" />
+          </Box>
+        </Stack>
       </Link>
-      <Button
-        sx={{ color: "lightgray" }}
-        size={"small"}
-        onClick={() => onDeleteButtonClick(props.note.id)}
-      >
-        <Delete fontSize="small" />
-      </Button>
+      <Box padding={1}>
+        <Button
+          sx={{ color: "lightgray", minWidth: "fit-content" }}
+          size={"small"}
+          onClick={() => onDeleteButtonClick(props.note.id)}
+        >
+          <Delete fontSize="small" />
+        </Button>
+      </Box>
     </Stack>
   );
 }
