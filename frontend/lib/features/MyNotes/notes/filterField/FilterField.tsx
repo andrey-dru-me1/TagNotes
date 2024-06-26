@@ -55,10 +55,11 @@ export default function FilterField() {
         Filter:
       </Box>
       <Divider orientation="vertical" flexItem />
-      <Box width={"100%"} padding={1}>
+      <Box width={"100%"} paddingX={1}>
         <Select
           multiple
           variant="standard"
+          disableUnderline
           value={filterTags.map((tag) => tag.id)}
           size="small"
           fullWidth
