@@ -1,6 +1,7 @@
 "use client";
 
 import api from "@/lib/features/api/api";
+import FilterField from "@/lib/features/MyNotes/notes/filterField/FilterField";
 import NotesView from "@/lib/features/MyNotes/notes/notesView/NotesView";
 import OneNoteView from "@/lib/features/MyNotes/notes/oneNoteView/OneNoteView";
 import { useAppSelector } from "@/lib/hooks";
@@ -41,6 +42,7 @@ export default function NotesComponent() {
 
   return (
     <Box padding={2}>
+      <FilterField />
       {noteView == NoteView.Notes && <NotesView notes={data} />}
       {noteView == NoteView.OneNote && <OneNoteView notes={data} />}
       <Button onClick={onAddNoteClick}>Add Note</Button>
