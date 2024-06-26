@@ -14,14 +14,23 @@ export default function NotesComponent() {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<Note[]>([]);
   const noteView = useAppSelector((state) => state.myNotes.noteView);
+  const filterTags = useAppSelector((state) => state.filter.filterTags);
 
   useEffect(() => {
-    api.get<Note[]>("/notes").then((response) => {
-      setIsLoading(false);
-      const payload: Note[] = response.data;
-      setData(payload);
-    });
-  }, []);
+    if (filterTags.length > 0) {
+      const filterTagIds = filterTags.map((tag) => tag.id);
+      api.post<Note[]>("/notes/filter", { filterTagIds }).then((response) => {
+        const payload: Note[] = response.data;
+        setData(payload);
+      });
+    } else {
+      api.get<Note[]>("/notes").then((response) => {
+        setIsLoading(false);
+        const payload: Note[] = response.data;
+        setData(payload);
+      });
+    }
+  }, [filterTags]);
 
   if (isLoading) {
     return <div>Loading...</div>;
