@@ -21,8 +21,11 @@ const filterFieldSlice = createSlice({
         state.filterTags.findIndex((tag) => tag.id === action.payload.id)
       );
     },
+    setTags(state, action) {
+      state.filterTags = action.payload;
+    },
   },
 });
 
-export const { appendTag, removeTag } = filterFieldSlice.actions;
+export const { appendTag, removeTag, setTags } = filterFieldSlice.actions;
 export default filterFieldSlice.reducer;
