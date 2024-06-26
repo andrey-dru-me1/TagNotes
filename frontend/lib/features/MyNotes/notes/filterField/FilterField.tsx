@@ -1,10 +1,11 @@
+import TagGrid from "@/lib/features/MyNotes/common/TagGrid";
 import { setTags } from "@/lib/features/MyNotes/notes/filterField/filterFieldSlice";
 import api from "@/lib/features/api/api";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import Tag from "@/lib/types/Tag";
+import { Add } from "@mui/icons-material";
 import {
   Box,
-  Chip,
   Divider,
   MenuItem,
   Select,
@@ -54,29 +55,34 @@ export default function FilterField() {
         Filter:
       </Box>
       <Divider orientation="vertical" flexItem />
-      <Select
-        multiple
-        variant="standard"
-        value={filterTags.map((tag) => tag.id)}
-        size="small"
-        fullWidth
-        onChange={handleChange}
-        renderValue={(selected) => (
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-            {selected.map((value) => {
-              const tag = possibleTags.find((tag) => tag.id === value);
-              if (tag === undefined) return;
-              return <Chip size="small" key={tag.id} label={tag.name} />;
-            })}
-          </Box>
-        )}
-      >
-        {possibleTags.map((tag) => (
-          <MenuItem key={tag.id} value={tag.id}>
-            {tag.name}
-          </MenuItem>
-        ))}
-      </Select>
+      <Box width={"100%"} padding={1}>
+        <Select
+          multiple
+          variant="standard"
+          value={filterTags.map((tag) => tag.id)}
+          size="small"
+          fullWidth
+          onChange={handleChange}
+          sx={{ height: "100%" }}
+          IconComponent={() => (
+            <Add
+              sx={{ position: "absolute", right: 0, pointerEvents: "none" }}
+            />
+          )}
+          renderValue={(selected) => {
+            const tags = selected
+              .map((tagId) => possibleTags.find((tag) => tag.id === tagId))
+              .filter((val): val is Tag => Boolean(val));
+            return <TagGrid tags={tags} />;
+          }}
+        >
+          {possibleTags.map((tag) => (
+            <MenuItem key={tag.id} value={tag.id}>
+              {tag.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </Box>
     </Stack>
   );
 }
