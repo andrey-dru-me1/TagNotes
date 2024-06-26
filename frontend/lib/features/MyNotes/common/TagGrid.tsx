@@ -1,25 +1,28 @@
 import Tag from "@/lib/types/Tag";
-import { Box, Chip, Grid } from "@mui/material";
+import { Box, Chip } from "@mui/material";
 
 export default function TagGrid({
   tags,
-  justifyContent,
+  justifyContent = "left",
 }: {
   tags: Tag[];
-  justifyContent: string;
+  justifyContent?: string;
 }) {
   return (
-    <Grid
-      container
+    <Box
+      display={"flex"}
+      flexWrap={"wrap"}
       justifyContent={justifyContent}
       width={"initial"}
       height={"fit-content"}
+      fontWeight={"bold"}
+      gap={0.5}
     >
       {tags.map((tag: Tag) => (
-        <Box key={tag.id} margin={0.3}>
+        <Box key={tag.id}>
           <Chip size="small" label={tag.name} />
         </Box>
       ))}
-    </Grid>
+    </Box>
   );
 }
