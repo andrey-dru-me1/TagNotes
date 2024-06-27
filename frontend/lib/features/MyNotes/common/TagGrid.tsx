@@ -4,9 +4,11 @@ import { Box, Chip } from "@mui/material";
 export default function TagGrid({
   tags,
   justifyContent = "left",
+  onDelete,
 }: {
   tags: Tag[];
   justifyContent?: string;
+  onDelete?: (tag: Tag) => void;
 }) {
   return (
     <Box
@@ -20,7 +22,12 @@ export default function TagGrid({
     >
       {tags.map((tag: Tag) => (
         <Box key={tag.id}>
-          <Chip size="small" label={tag.name} />
+          <Chip
+            size="small"
+            label={tag.name}
+            onClick={(e) => e.stopPropagation()}
+            onDelete={onDelete ? () => onDelete(tag) : undefined}
+          />
         </Box>
       ))}
     </Box>
