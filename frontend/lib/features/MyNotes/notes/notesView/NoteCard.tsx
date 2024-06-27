@@ -4,7 +4,7 @@ import { onDeleteButtonClick } from "@/lib/features/MyNotes/notes/buttonHandler"
 import Note from "@/lib/types/Note";
 import Tag from "@/lib/types/Tag";
 import { Delete } from "@mui/icons-material";
-import { Box, Button, Link, Stack } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 
 export default function NoteCard(props: { note: Note }) {
@@ -20,6 +20,12 @@ export default function NoteCard(props: { note: Note }) {
       .catch((e) => console.log(e));
   };
 
+  const generateUnpinTag = (note: Note) => {
+    return (tag: Tag) => {
+      api.delete(`/note/${note.id}/tag/${tag.id}`).then(updateTags);
+    };
+  };
+
   useEffect(updateTags, []);
 
   return (
@@ -30,15 +36,15 @@ export default function NoteCard(props: { note: Note }) {
       width={1000}
       minHeight={70}
     >
-      <Link
-        fontFamily={"sans-serif"}
+      <Box
         color={"inherit"}
-        underline="none"
-        href={`/note/${props.note.id}`}
+        onClick={() => (window.location.href = `/note/${props.note.id}`)}
+        fontFamily={"sans-serif"}
         sx={{
           borderRadius: 3,
           border: 3,
           width: 1,
+          cursor: "pointer",
         }}
       >
         <Stack direction={"row"}>
@@ -53,10 +59,14 @@ export default function NoteCard(props: { note: Note }) {
             {props.note.title}
           </Box>
           <Box padding={0.5}>
-            <TagGrid tags={tags} justifyContent="right" />
+            <TagGrid
+              tags={tags}
+              justifyContent="right"
+              onDelete={generateUnpinTag(props.note)}
+            />
           </Box>
         </Stack>
-      </Link>
+      </Box>
       <Box padding={1}>
         <Button
           sx={{ color: "lightgray", minWidth: "fit-content" }}
