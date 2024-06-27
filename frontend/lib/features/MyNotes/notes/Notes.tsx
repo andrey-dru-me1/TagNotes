@@ -52,9 +52,9 @@ export default function NotesComponent() {
   return (
     <Box padding={2}>
       <FilterField />
+      <Button onClick={onAddNoteClick}>Add Note</Button>
       {noteView == NoteView.Notes && <NotesView notes={data} />}
       {noteView == NoteView.OneNote && <OneNoteView notes={data} />}
-      <Button onClick={onAddNoteClick}>Add Note</Button>
     </Box>
   );
 }
