@@ -1,13 +1,13 @@
 import api from "@/lib/features/api/api";
 import Note from "@/lib/types/Note";
 import Tag from "@/lib/types/Tag";
-import { Box, Button, MenuItem, Select } from "@mui/material";
+import { Box, Button, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 
 export default function TagAppender({ note }: { note: Note | null }) {
   const [tags, setTags] = useState<Tag[]>([]);
-  const [newTagId, setNewTagId] = useState<string>("");
   const [possibleTags, setPossibleTags] = useState<Tag[]>([]);
+  const [newTagName, setNewTagName] = useState<string>("");
 
   const updateTags = () => {
     api
@@ -29,6 +29,13 @@ export default function TagAppender({ note }: { note: Note | null }) {
       .catch((e) => console.log(e));
   };
 
+  const pinTag = (tagId: number) => {
+    api
+      .post(`/note/${note?.id}/tag/${tagId}`)
+      .then(updateTags)
+      .catch((e) => console.log(e));
+  };
+
   useEffect(updateTags, []);
   useEffect(getPossibleTags, []);
 
@@ -36,15 +43,10 @@ export default function TagAppender({ note }: { note: Note | null }) {
     api.delete(`/note/${note?.id}/tag/${tagId}`, {}).then(updateTags);
   };
 
-  const onAddClick = () => {
-    api
-      .post(`/note/${note?.id}/tag/${newTagId}`)
-      .then(updateTags)
-      .catch((e) => console.log(e));
-  };
-
   const onChange = ({ target: { value } }: { target: { value: string } }) => {
-    setNewTagId(value);
+    if (typeof value === "number") {
+      pinTag(value);
+    }
   };
 
   return (
@@ -54,17 +56,33 @@ export default function TagAppender({ note }: { note: Note | null }) {
           {tag.name} <Button onClick={() => onDelClick(tag.id)}>Del</Button>
         </Box>
       ))}
-      <Select sx={{ minWidth: 200 }} onChange={onChange} value={newTagId}>
-        <MenuItem value="">
-          <em>None</em>
-        </MenuItem>
-        {possibleTags.map((tag: Tag) => (
-          <MenuItem key={tag.id} value={tag.id}>
-            {tag.name}
-          </MenuItem>
-        ))}
+      <Select sx={{ minWidth: 200 }} onChange={onChange}>
+        {possibleTags
+          .filter((tag) => !tags.includes(tag))
+          .map((tag: Tag) => (
+            <MenuItem key={tag.id} value={tag.id}>
+              {tag.name}
+            </MenuItem>
+          ))}
       </Select>
-      <Button onClick={onAddClick}>Add tag</Button>
+      <Stack direction={"row"}>
+        <TextField
+          value={newTagName}
+          onChange={({ target: { value } }) => setNewTagName(value)}
+        ></TextField>
+        <Button
+          onClick={() => {
+            api.post("/tag", { name: newTagName }).then((response) => {
+              const newTag: Tag = response.data;
+              pinTag(newTag.id);
+              getPossibleTags();
+              setNewTagName("");
+            });
+          }}
+        >
+          Add
+        </Button>
+      </Stack>
     </Box>
   );
 }
