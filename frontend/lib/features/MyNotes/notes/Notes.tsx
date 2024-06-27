@@ -19,7 +19,7 @@ export default function NotesComponent() {
   useEffect(() => {
     if (filterTags.length > 0) {
       const filterTagIds = filterTags.map((tag) => tag.id);
-      api.post<Note[]>("/notes/filter", { filterTagIds }).then((response) => {
+      api.post<Note[]>("/notes/filter", filterTagIds).then((response) => {
         const payload: Note[] = response.data;
         setData(payload);
       });
