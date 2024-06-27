@@ -66,7 +66,7 @@ export default function TagAppender({ note }: { note: Note | null }) {
       ))}
       <Select sx={{ minWidth: 200 }} onChange={onChange}>
         {possibleTags
-          .filter((tag) => !tags.includes(tag))
+          .filter((tag) => !tags.some((t) => t.id === tag.id))
           .map((tag: Tag) => (
             <MenuItem key={tag.id} value={tag.id}>
               <Stack
