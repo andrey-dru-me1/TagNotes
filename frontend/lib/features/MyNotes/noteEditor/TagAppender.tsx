@@ -1,6 +1,7 @@
 import api from "@/lib/features/api/api";
 import Note from "@/lib/types/Note";
 import Tag from "@/lib/types/Tag";
+import { Delete } from "@mui/icons-material";
 import { Box, Button, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 
@@ -36,6 +37,13 @@ export default function TagAppender({ note }: { note: Note | null }) {
       .catch((e) => console.log(e));
   };
 
+  const deleteTag = (tagId: number) => {
+    api.delete(`/tag/${tagId}`).then(() => {
+      updateTags();
+      getPossibleTags();
+    });
+  };
+
   useEffect(updateTags, []);
   useEffect(getPossibleTags, []);
 
@@ -61,7 +69,12 @@ export default function TagAppender({ note }: { note: Note | null }) {
           .filter((tag) => !tags.includes(tag))
           .map((tag: Tag) => (
             <MenuItem key={tag.id} value={tag.id}>
-              {tag.name}
+              <Stack direction={"row"}>
+                {tag.name}
+                <Button size="small" onClick={() => deleteTag(tag.id)}>
+                  <Delete fontSize="small" />
+                </Button>
+              </Stack>
             </MenuItem>
           ))}
       </Select>
