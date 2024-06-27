@@ -51,22 +51,39 @@ export default function NoteEditor({ noteId }: { noteId: number }) {
         direction={"row"}
         sx={{ borderRadius: 8, border: 4 }}
       >
-        <Box width={700} margin={2}>
+        <Stack direction={"column"} width={700} margin={1}>
           <TextField
             fullWidth
+            variant="standard"
             defaultValue={note?.title}
             onChange={onTitleChange}
+            InputProps={{
+              disableUnderline: true,
+              sx: { fontSize: 32, fontWeight: "bold" },
+            }}
           />
           <TextField
             multiline
+            variant="standard"
             fullWidth
-            defaultValue={note?.content}
+            value={note?.content}
             onChange={onContentChange}
+            sx={{ height: "100%" }}
+            InputProps={{
+              disableUnderline: true,
+              sx: { height: "100%", alignItems: "start" },
+            }}
           />
-          <Button variant={"outlined"} onClick={onSaveClick}>
-            Save
-          </Button>
-        </Box>
+          <Box>
+            <Button
+              sx={{ size: "fit-content" }}
+              variant={"outlined"}
+              onClick={onSaveClick}
+            >
+              Save
+            </Button>
+          </Box>
+        </Stack>
         <Divider orientation="vertical" flexItem />
         {note !== null && <TagAppender note={note} />}
       </Stack>
