@@ -1,7 +1,7 @@
 import api from "@/lib/features/api/api";
 import Note from "@/lib/types/Note";
 import Tag from "@/lib/types/Tag";
-import { Delete } from "@mui/icons-material";
+import { DeleteOutline } from "@mui/icons-material";
 import { Box, Button, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 
@@ -69,10 +69,18 @@ export default function TagAppender({ note }: { note: Note | null }) {
           .filter((tag) => !tags.includes(tag))
           .map((tag: Tag) => (
             <MenuItem key={tag.id} value={tag.id}>
-              <Stack direction={"row"}>
-                {tag.name}
-                <Button size="small" onClick={() => deleteTag(tag.id)}>
-                  <Delete fontSize="small" />
+              <Stack
+                direction={"row"}
+                justifyContent={"space-between"}
+                width={"100%"}
+              >
+                <Box>{tag.name}</Box>
+                <Button
+                  sx={{ color: "gray" }}
+                  size="small"
+                  onClick={() => deleteTag(tag.id)}
+                >
+                  <DeleteOutline fontSize="small" />
                 </Button>
               </Stack>
             </MenuItem>
