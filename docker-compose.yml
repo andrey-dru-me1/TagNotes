@@ -15,11 +15,20 @@ services:
     container_name: tagnotes_react
     volumes:
       - ./frontend:/root/tagnotes_react
+  migration:
+    build: backend
+    command: php bin/console --no-interaction doctrine:migrations:migrate
+    working_dir: /root/backend
+    volumes:
+      - ./backend:/root/backend
   fpm:
     build: backend
     container_name: tagnotes_fpm
     volumes:
       - ./backend:/var/www/html
+    depends_on:
+      migration:
+        condition: service_completed_successfully
     links:
       - postgres
   postgres:
