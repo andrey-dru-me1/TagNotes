@@ -30,7 +30,6 @@ jobs:
             && git checkout $BRANCH_NAME \
             && git pull \
             && composer -d backend install \
-            && php backend/bin/console --no-interaction doctrine:migrations:migrate \
             && npm --prefix ./frontend install \
             && docker compose down \
             && docker compose up -d"
