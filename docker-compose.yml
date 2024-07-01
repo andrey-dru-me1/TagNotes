@@ -19,6 +19,9 @@ services:
     build: backend
     command: php bin/console --no-interaction doctrine:migrations:migrate
     working_dir: /root/backend
+    depends_on:
+      postgres:
+        condition: service_started
     volumes:
       - ./backend:/root/backend
   fpm:
