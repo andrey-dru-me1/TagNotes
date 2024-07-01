@@ -32,7 +32,7 @@ class NoteAccessLog
         return $this;
     }
 
-    public function getNoteId(): ?Note
+    public function getNote(): ?Note
     {
         return $this->note;
     }
