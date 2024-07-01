@@ -3,10 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Note;
+use App\Entity\NoteAccessLog;
 use App\Entity\NoteTag;
 use App\Repository\NoteRepository;
 use App\Repository\NoteTagRepository;
 use App\Repository\TagRepository;
+use DateTimeImmutable;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -98,9 +101,20 @@ class NoteController extends AbstractController
     }
 
     #[Route('/api/note/{id}', name: 'get_note', methods: ['GET'])]
-    public function getNote(int $id, NoteRepository $noteRepository): JsonResponse
+    public function getNote(int $id, NoteRepository $noteRepository, EntityManagerInterface $em): JsonResponse
     {
-        return $this->json($noteRepository->find($id), Response::HTTP_OK);
+        $note = $noteRepository->find($id);
+
+        $date = date('d-m-y h:i:s');
+
+        $noteAccess = new NoteAccessLog();
+        $noteAccess->setNoteId($note);
+        $noteAccess->setAccessDate(new DateTimeImmutable($date));
+
+        $em->persist($noteAccess);
+        $em->flush();
+
+        return $this->json($note, Response::HTTP_OK);
     }
 
     #[Route('/api/note/{id}', name: 'delete_note', methods: ['DELETE'])]
