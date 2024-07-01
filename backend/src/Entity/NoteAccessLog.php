@@ -15,7 +15,7 @@ class NoteAccessLog
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Note $note_id = null;
+    private ?Note $note = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $access_date = null;
@@ -34,12 +34,12 @@ class NoteAccessLog
 
     public function getNoteId(): ?Note
     {
-        return $this->note_id;
+        return $this->note;
     }
 
     public function setNoteId(?Note $note_id): static
     {
-        $this->note_id = $note_id;
+        $this->note = $note_id;
 
         return $this;
     }
