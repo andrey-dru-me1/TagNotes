@@ -5,11 +5,11 @@ namespace App\Controller;
 use App\Entity\Note;
 use App\Entity\NoteAccessLog;
 use App\Entity\NoteTag;
+use App\Repository\NoteAccessLogRepository;
 use App\Repository\NoteRepository;
 use App\Repository\NoteTagRepository;
 use App\Repository\TagRepository;
 use DateTimeImmutable;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -95,9 +95,11 @@ class NoteController extends AbstractController
     }
 
     #[Route('/api/notes', name: 'list_notes', methods: ['GET'])]
-    public function listNotes(NoteRepository $noteRepository): JsonResponse
+    public function listNotes(NoteRepository $noteRepository, NoteAccessLogRepository $noteAccessLogRepository): JsonResponse
     {
-        return $this->json($noteRepository->findAll(), Response::HTTP_OK);
+        $notes = $noteRepository->findAll();
+        $sortedNotes = $noteAccessLogRepository->sort($notes);
+        return $this->json($sortedNotes, Response::HTTP_OK);
     }
 
     #[Route('/api/note/{id}', name: 'get_note', methods: ['GET'])]
