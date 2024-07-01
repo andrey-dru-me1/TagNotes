@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\NoteAccessLog;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<NoteAccessLog>
@@ -16,28 +16,32 @@ class NoteAccessLogRepository extends ServiceEntityRepository
         parent::__construct($registry, NoteAccessLog::class);
     }
 
-    //    /**
-    //     * @return NoteAccessLog[] Returns an array of NoteAccessLog objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('n')
-    //            ->andWhere('n.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('n.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function sort(array $notes): array
+    {
+        $currentTime = time();
+        $noteAccessLogs = $this->findAll();
 
-    //    public function findOneBySomeField($value): ?NoteAccessLog
-    //    {
-    //        return $this->createQueryBuilder('n')
-    //            ->andWhere('n.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $notePoints = array();
+        $idToNote = array();
+        foreach ($notes as $note) {
+            $noteId = $note->getId();
+            $notePoints[$noteId] = 0;
+            $idToNote[$noteId] = $note;
+        }
+        foreach ($noteAccessLogs as $noteAccessLog) {
+            $noteId = $noteAccessLog->getNote()->getId();
+            $logTime = $noteAccessLog->getAccessDate()->getTimestamp();
+            if (!array_key_exists($noteId, $notePoints)) {
+                $notePoints[$noteId] = 0.;
+            }
+            $diffTime = $currentTime - $logTime;
+            $notePoints[$noteId] += 1. / $diffTime;
+        }
+        arsort($notePoints, SORT_NUMERIC);
+        $sortedNoteIds = array_keys($notePoints);
+        $sortedNotes = array_map(function (int $noteId) use ($idToNote) {
+            return $idToNote[$noteId];
+        }, $sortedNoteIds);
+        return $sortedNotes;
+    }
 }
