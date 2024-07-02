@@ -7,9 +7,10 @@ services:
     volumes:
       - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./backend/public:/var/www/html/public
-    links:
+    depends_on:
       - react
       - fpm
+      - pgadmin
   react:
     build: frontend
     container_name: tagnotes_react
@@ -32,8 +33,16 @@ services:
     depends_on:
       migration:
         condition: service_completed_successfully
-    links:
-      - postgres
+  pgadmin:
+    image: dpage/pgadmin4
+    volumes:
+      - ./data:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: andrey_melnikov@dotwrk.com
+      PGADMIN_DEFAULT_PASSWORD: 123456
+    depends_on:
+      postgres:
+        condition: service_healthy
   postgres:
     image: postgres:latest
     container_name: tagnotes_postgres
