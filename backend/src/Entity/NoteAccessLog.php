@@ -14,7 +14,7 @@ class NoteAccessLog
     private ?int $id = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Note $note = null;
 
     #[ORM\Column]
@@ -25,7 +25,7 @@ class NoteAccessLog
         return $this->id;
     }
 
-    public function setId(string $id): static
+    public function setId(int $id): static
     {
         $this->id = $id;
 
