@@ -35,8 +35,6 @@ services:
         condition: service_completed_successfully
   pgadmin:
     image: dpage/pgadmin4
-    volumes:
-      - ./data:/var/lib/pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: andrey_melnikov@dotwrk.com
       PGADMIN_DEFAULT_PASSWORD: 123456
