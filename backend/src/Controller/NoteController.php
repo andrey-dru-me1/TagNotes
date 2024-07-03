@@ -107,11 +107,9 @@ class NoteController extends AbstractController
     {
         $note = $noteRepository->find($id);
 
-        $date = date('d-m-y h:i:s');
-
         $noteAccess = new NoteAccessLog();
         $noteAccess->setNoteId($note);
-        $noteAccess->setAccessDate(new DateTimeImmutable($date));
+        $noteAccess->setAccessDate(new DateTimeImmutable());
 
         $em->persist($noteAccess);
         $em->flush();
