@@ -3,30 +3,35 @@
 namespace App\Controller;
 
 use App\Entity\Note;
-use App\Entity\NoteAccessLog;
+use App\Entity\User;
+use DateTimeImmutable;
 use App\Entity\NoteTag;
-use App\Repository\NoteAccessLogRepository;
+use App\Entity\NoteAccessLog;
+use App\Repository\TagRepository;
 use App\Repository\NoteRepository;
 use App\Repository\NoteTagRepository;
-use App\Repository\TagRepository;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\NoteAccessLogRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class NoteController extends AbstractController
 {
 
     #[Route('/api/notes/filter', name: 'filter', methods: ['POST'])]
-    public function filterNotes(Request $request, NoteRepository $noteRepository, NoteTagRepository $noteTagRepository)
+    public function filterNotes(Request $request, NoteRepository $noteRepository, NoteTagRepository $noteTagRepository, #[CurrentUser] ?User $user)
     {
         $tagIds = json_decode($request->getContent(), true);
         $noteIds = $noteTagRepository->findNoteIdsByTagIds($tagIds);
         $notes = $noteRepository->findByIds($noteIds);
-        return $this->json($notes);
+        $userNotes = array_filter($notes, function (Note $note) use ($user) {
+            return $note->author->getId() === $user->getId();
+        });
+        return $this->json($userNotes);
     }
 
     #[Route('/api/note/{noteId}/tag/{tagId}', name: 'remove_tag', methods: ['DELETE'])]
@@ -95,9 +100,9 @@ class NoteController extends AbstractController
     }
 
     #[Route('/api/notes', name: 'list_notes', methods: ['GET'])]
-    public function listNotes(NoteRepository $noteRepository, NoteAccessLogRepository $noteAccessLogRepository): JsonResponse
+    public function listNotes(#[CurrentUser] ?User $user, NoteRepository $noteRepository, NoteAccessLogRepository $noteAccessLogRepository): JsonResponse
     {
-        $notes = $noteRepository->findAll();
+        $notes = $user->getNotes()->toArray();
         $sortedNotes = $noteAccessLogRepository->sort($notes);
         return $this->json($sortedNotes, Response::HTTP_OK);
     }
