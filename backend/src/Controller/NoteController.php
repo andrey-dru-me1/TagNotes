@@ -29,7 +29,7 @@ class NoteController extends AbstractController
         $noteIds = $noteTagRepository->findNoteIdsByTagIds($tagIds);
         $notes = $noteRepository->findByIds($noteIds);
         $userNotes = array_filter($notes, function (Note $note) use ($user) {
-            return $note->author->getId() === $user->getId();
+            return $note->getAuthor()->getId() === $user->getId();
         });
         return $this->json($userNotes);
     }
