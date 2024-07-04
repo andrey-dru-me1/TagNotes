@@ -30,9 +30,12 @@ services:
     container_name: tagnotes_fpm
     volumes:
       - ./backend:/var/www/html
+      - ./config/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
     depends_on:
       migration:
         condition: service_completed_successfully
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   pgadmin:
     image: dpage/pgadmin4
     environment:
