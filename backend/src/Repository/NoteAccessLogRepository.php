@@ -37,15 +37,14 @@ class NoteAccessLogRepository extends ServiceEntityRepository
             $noteId = $noteAccessLog->getNote()->getId();
             $logDate = $noteAccessLog->getAccessDate();
             $logTime = $logDate->getTimestamp();
-            if (!array_key_exists($noteId, $notePoints)) {
-                $notePoints[$noteId] = 0.;
-            }
-            $diffTime = $currentTime - $logTime;
-            $diff = exp(-$diffTime / 1e5);
-            if ($diff < 1e-9) {
-                $this->em->remove($noteAccessLog);
-            } else {
-                $notePoints[$noteId] += $diff;
+            if (array_key_exists($noteId, $notePoints)) {
+                $diffTime = $currentTime - $logTime;
+                $diff = exp(-$diffTime / 1e5);
+                if ($diff < 1e-9) {
+                    $this->em->remove($noteAccessLog);
+                } else {
+                    $notePoints[$noteId] += $diff;
+                }
             }
         }
         $this->em->flush();
