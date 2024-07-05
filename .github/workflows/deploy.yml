@@ -32,5 +32,6 @@ jobs:
             && git pull \
             && composer -d backend install \
             && npm --prefix ./frontend install \
+            && docker compose build \
             && docker compose up -d"
           echo "Deployment completed."
