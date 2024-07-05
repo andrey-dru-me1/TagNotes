@@ -49,7 +49,7 @@ export default function FilterField() {
       border={4}
       borderColor={"black"}
       borderRadius={4}
-      maxWidth={1000}
+      width={1000}
     >
       <Box fontSize={30} margin={2}>
         Filter:
