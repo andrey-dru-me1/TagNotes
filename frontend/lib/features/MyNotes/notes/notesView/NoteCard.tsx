@@ -4,7 +4,7 @@ import { onDeleteButtonClick } from "@/lib/features/MyNotes/notes/buttonHandler"
 import Note from "@/lib/types/Note";
 import Tag from "@/lib/types/Tag";
 import { Delete } from "@mui/icons-material";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, IconButton, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 
 export default function NoteCard(props: { note: Note }) {
@@ -68,13 +68,13 @@ export default function NoteCard(props: { note: Note }) {
         </Stack>
       </Box>
       <Box padding={1}>
-        <Button
-          sx={{ color: "lightgray", minWidth: "fit-content" }}
+        <IconButton
+          sx={{ color: "lightgray" }}
           size={"small"}
           onClick={() => onDeleteButtonClick(props.note.id)}
         >
           <Delete fontSize="small" />
-        </Button>
+        </IconButton>
       </Box>
     </Stack>
   );
