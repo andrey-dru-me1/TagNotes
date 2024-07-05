@@ -4,7 +4,18 @@ import { changeNoteView } from "@/lib/features/MyNotes/myNotesWrapper/myNotesWra
 import { useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
 import NoteView from "@/lib/types/NoteView";
-import { FormControlLabel, Radio, RadioGroup, Stack } from "@mui/material";
+import { AccountCircleOutlined } from "@mui/icons-material";
+import {
+  Box,
+  FormControlLabel,
+  IconButton,
+  Menu,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Stack,
+} from "@mui/material";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 
 export default function MyNotesWrapper({
@@ -14,9 +25,15 @@ export default function MyNotesWrapper({
 }) {
   const noteView = useAppSelector((state: RootState) => state.myNotes.noteView);
   const dispatch = useDispatch();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>();
+  const open = Boolean(anchorEl);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
-    <Stack direction={"row"}>
+    <Stack direction={"row"} width={"100%"} justifyContent={"space-between"}>
       <RadioGroup value={noteView}>
         <FormControlLabel
           value={NoteView.Notes}
@@ -31,7 +48,26 @@ export default function MyNotesWrapper({
           onClick={() => dispatch(changeNoteView(NoteView.OneNote))}
         ></FormControlLabel>
       </RadioGroup>
-      {children}
+      <Box>{children}</Box>
+      <Box alignItems={"top"}>
+        <IconButton
+          onClick={(event: React.MouseEvent<HTMLElement>) =>
+            setAnchorEl(event.currentTarget)
+          }
+        >
+          <AccountCircleOutlined sx={{ fontSize: "40px" }} />
+        </IconButton>
+      </Box>
+      <Menu
+        open={open}
+        onClose={handleClose}
+        onClick={handleClose}
+        anchorEl={anchorEl}
+      >
+        <MenuItem onClick={() => (window.location.href = "/login")}>
+          Log out
+        </MenuItem>
+      </Menu>
     </Stack>
   );
 }
