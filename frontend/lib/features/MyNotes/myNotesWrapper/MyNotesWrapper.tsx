@@ -1,5 +1,6 @@
 "use client";
 
+import api from "@/lib/features/api/api";
 import { changeNoteView } from "@/lib/features/MyNotes/myNotesWrapper/myNotesWrapperSlice";
 import { useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
@@ -64,6 +65,20 @@ export default function MyNotesWrapper({
         onClick={handleClose}
         anchorEl={anchorEl}
       >
+        <MenuItem
+          onClick={() =>
+            api
+              .get("/user")
+              .then(
+                (response) => (window.location.href = `/user/${response.data}`)
+              )
+          }
+        >
+          Profile
+        </MenuItem>
+        <MenuItem onClick={() => (window.location.href = "/notes")}>
+          MyNotes
+        </MenuItem>
         <MenuItem onClick={() => (window.location.href = "/login")}>
           Log out
         </MenuItem>
