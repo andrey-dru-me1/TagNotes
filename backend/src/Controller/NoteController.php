@@ -169,7 +169,7 @@ class NoteController extends AbstractController
     }
 
     #[Route('/api/note', name: 'create_note', methods: ['POST'])]
-    public function index(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function index(Request $request, EntityManagerInterface $entityManager, #[CurrentUser] ?User $user): JsonResponse
     {
         try {
             $data = json_decode($request->getContent(), true);
@@ -177,6 +177,7 @@ class NoteController extends AbstractController
             $note = new Note();
             $note->setTitle($data['title']);
             $note->setContent($data['content']);
+            $note->setAuthor($user);
 
             $entityManager->persist($note);
             $entityManager->flush();
