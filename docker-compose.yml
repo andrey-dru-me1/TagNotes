@@ -38,9 +38,11 @@ services:
       - "host.docker.internal:host-gateway"
   pgadmin:
     image: dpage/pgadmin4
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: andrey_melnikov@dotwrk.com
-      PGADMIN_DEFAULT_PASSWORD: 123456
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     depends_on:
       migration:
         condition: service_completed_successfully
