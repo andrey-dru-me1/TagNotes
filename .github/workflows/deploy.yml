@@ -26,12 +26,12 @@ jobs:
           echo "Starting deployment..."
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no andrey@31.128.37.60 "\
             cd /home/andrey/TagNotes \
-            && docker compose down \
+            && docker compose --profile prod down \
             && git checkout . \
             && git checkout $BRANCH_NAME \
             && git pull \
             && composer -d backend install \
             && npm --prefix ./frontend install \
             && docker compose build \
-            && docker compose up -d"
+            && docker compose --profile prod up -d"
           echo "Deployment completed."
