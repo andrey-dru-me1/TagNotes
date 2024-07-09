@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\NoteService;
 use App\Entity\Note;
 use App\Entity\User;
 use DateTimeImmutable;
@@ -169,26 +170,14 @@ class NoteController extends AbstractController
     }
 
     #[Route('/api/note', name: 'create_note', methods: ['POST'])]
-    public function index(Request $request, EntityManagerInterface $entityManager, #[CurrentUser] ?User $user): JsonResponse
+    public function createNote(Request $request, NoteService $noteService, #[CurrentUser] ?User $user): JsonResponse
     {
         try {
             $data = json_decode($request->getContent(), true);
-
-            $note = new Note();
-            $note->setTitle($data['title']);
-            $note->setContent($data['content']);
-            $note->setAuthor($user);
-
-            $entityManager->persist($note);
-            $entityManager->flush();
-
+            $note = $noteService->createNote($data, $user);
             return $this->json($note);
         } catch (\Exception $e) {
-            $data = [
-                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-                'error' => "$e"
-            ];
-            return new JsonResponse($data);
+            return $this->json($e, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
