@@ -1,0 +1,16 @@
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./backend/public:/var/www/html/public
+    depends_on:
+      - fpm
+      - pgadmin
+  react:
+    hostname: react
+    build: frontend
+    volumes:
+      - ./frontend:/root/tagnotes_react
