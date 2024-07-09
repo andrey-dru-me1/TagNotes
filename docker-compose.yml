@@ -36,7 +36,7 @@ services:
     build: backend
     container_name: tagnotes_fpm
     volumes:
-      - ./backend:/var/www/html
+      - ./backend:/var/www/html:cached
       - ./config/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
     depends_on:
       migration:
