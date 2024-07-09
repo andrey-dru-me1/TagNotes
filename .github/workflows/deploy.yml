@@ -1,9 +1,9 @@
 name: Deployment Workflow
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
   workflow_dispatch:
 
 jobs:
@@ -20,15 +20,18 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
       - name: Deploy to server
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
         run: |
           echo "Starting deployment..."
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no andrey@31.128.37.60 "\
             cd /home/andrey/TagNotes \
-            && git pull origin $GITHUB_HEAD_REF \
-            && cd backend/app \
-            && composer update \
-            && composer install \
-            && cd .. \
             && docker compose down \
+            && git checkout . \
+            && git checkout $BRANCH_NAME \
+            && git pull \
+            && composer -d backend install \
+            && npm --prefix ./frontend install \
+            && docker compose build \
             && docker compose up -d"
           echo "Deployment completed."

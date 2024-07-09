@@ -1,0 +1,65 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: tagnotes_nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./backend/public:/var/www/html/public
+    depends_on:
+      - react
+      - fpm
+      - pgadmin
+  react:
+    build: frontend
+    container_name: tagnotes_react
+    volumes:
+      - ./frontend:/root/tagnotes_react
+  migration:
+    build: backend
+    command: bin/console --no-interaction doctrine:migrations:migrate
+    working_dir: /root/backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/root/backend
+  fpm:
+    build: backend
+    container_name: tagnotes_fpm
+    volumes:
+      - ./backend:/var/www/html
+      - ./config/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  pgadmin:
+    image: dpage/pgadmin4
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+  postgres:
+    image: postgres:latest
+    container_name: tagnotes_postgres
+    environment:
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "postgres"]
+      interval: 1s
+      timeout: 60s
+      retries: 5
+      start_period: 1s
