@@ -6,6 +6,7 @@ use App\Entity\NoteTag;
 use App\Entity\Tag;
 use App\Repository\NoteTagRepository;
 use App\Repository\TagRepository;
+use App\Service\TagService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,96 +17,55 @@ use Symfony\Component\Routing\Attribute\Route;
 class TagController extends AbstractController
 {
 
+    public function __construct(
+        private TagService $tagService,
+    ) {
+    }
+
     #[Route('/api/tag/{id}/notes', name: 'list_tag_notes', methods: ['GET'])]
-    public function listTagNotes(int $id, NoteTagRepository $noteTagRepository): JsonResponse
+    public function listTagNotes(int $id): JsonResponse
     {
-        $noteTags = $noteTagRepository->findBy(['tag' => $id]);
-        $tags = array_map(function (NoteTag $noteTag) {
-            return $noteTag->getNote();
-        }, $noteTags);
-        return $this->json($tags, Response::HTTP_OK);
+        $notes = $this->tagService->listTagNotes($id);
+        return $this->json($notes, Response::HTTP_OK);
     }
 
     #[Route('/api/tags', name: 'list_tags', methods: ['GET'])]
-    public function listTags(TagRepository $tagRepository): JsonResponse
+    public function listTags(): JsonResponse
     {
-        return $this->json($tagRepository->findAll(), Response::HTTP_OK);
+        $tags = $this->tagService->listTags();
+        return $this->json($tags, Response::HTTP_OK);
     }
 
     #[Route('/api/tag/{id}', name: 'get_tag', methods: ['GET'])]
-    public function getTag(int $id, TagRepository $tagRepository): JsonResponse
+    public function getTag(int $id): JsonResponse
     {
-        return $this->json($tagRepository->find($id), Response::HTTP_OK);
+        $tag = $this->tagService->getTag($id);
+        return $this->json($tag, Response::HTTP_OK);
     }
 
     #[Route('/api/tag/{id}', name: 'edit_tag', methods: ['POST'])]
     public function editTag(
         int $id,
         Request $request,
-        TagRepository $tagRepository,
-        EntityManagerInterface $entityManager
     ): JsonResponse {
-        try {
-            $data = json_decode($request->getContent(), true);
-
-            $tag = $tagRepository->find($id);
-            if (null === $tag) {
-                return $this->json("Tag with id '$id' not found.", Response::HTTP_NOT_FOUND);
-            }
-
-            if (array_key_exists('name', $data)) {
-                $tag->setName($data['name']);
-            }
-
-            $entityManager->persist($tag);
-            $entityManager->flush();
-
-            return $this->json($tag, Response::HTTP_OK);
-        } catch (\Exception $e) {
-            return $this->json("$e", Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        $data = json_decode($request);
+        $tag = $this->tagService->editTag($id, $data['name']);
+        return $this->json($tag);
     }
 
     #[Route('/api/tag/{id}', name: 'delete_tag', methods: ['DELETE'])]
     public function deleteTag(
         int $id,
-        TagRepository $tagRepository,
-        EntityManagerInterface $entityManager
     ): JsonResponse {
-        try {
-            $tag = $tagRepository->find($id);
-            if (null === $tag) {
-                return $this->json("Tag with id '$id' not found.", Response::HTTP_NOT_FOUND);
-            }
-
-            $entityManager->remove($tag);
-            $entityManager->flush();
-
-            return $this->json($tag, Response::HTTP_OK);
-        } catch (\Exception $e) {
-            return $this->json("$e", Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        $this->tagService->deleteTag($id);
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 
     #[Route('/api/tag', name: 'create_tag', methods: ['POST'])]
-    public function index(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function createTag(Request $request): JsonResponse
     {
-        try {
-            $data = json_decode($request->getContent(), true);
-
-            $tag = new Tag();
-            $tag->setName($data['name']);
-
-            $entityManager->persist($tag);
-            $entityManager->flush();
-
-            return $this->json($tag, Response::HTTP_CREATED);
-        } catch (\Exception $e) {
-            $data = [
-                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-                'error' => "$e"
-            ];
-            return new JsonResponse($data);
-        }
+        $data = json_decode($request);
+        $tag = $this->tagService->createTag($data['name']);
+        return $this->json($tag, Response::HTTP_CREATED);
     }
 }

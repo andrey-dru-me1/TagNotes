@@ -23,15 +23,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class NoteController extends AbstractController
 {
 
+    public function __construct(
+        private NoteService $noteService,
+    ) {
+    }
+
     #[Route('/api/notes/filter', name: 'filter', methods: ['POST'])]
-    public function filterNotes(Request $request, NoteRepository $noteRepository, NoteTagRepository $noteTagRepository, #[CurrentUser] ?User $user)
-    {
+    public function filterNotes(
+        Request $request,
+        #[CurrentUser] ?User $user
+    ) {
         $tagIds = json_decode($request->getContent(), true);
-        $noteIds = $noteTagRepository->findNoteIdsByTagIds($tagIds);
-        $notes = $noteRepository->findByIds($noteIds);
-        $userNotes = array_filter($notes, function (Note $note) use ($user) {
-            return $note->getAuthor()->getId() === $user->getId();
-        });
+        $userNotes = $this->noteService->filterNotes($tagIds, $user);
         return $this->json($userNotes);
     }
 
@@ -39,145 +42,69 @@ class NoteController extends AbstractController
     public function removeTag(
         int $noteId,
         int $tagId,
-        NoteRepository $noteRepository,
-        TagRepository $tagRepository,
-        NoteTagRepository $noteTagRepository,
-        EntityManagerInterface $entityManager
-    ): JsonResponse {
-        $note = $noteRepository->find($noteId);
-        $tag = $tagRepository->find($tagId);
-        $noteTags = $noteTagRepository->findBy(['note' => $note, 'tag' => $tag]);
-        foreach ($noteTags as $noteTag) {
-            $entityManager->remove($noteTag);
-        }
-        $entityManager->flush();
-
-        $data = [
-            'status' => Response::HTTP_OK,
-            'success' => 'Tag is successfully unpinned from note',
-        ];
-        return new JsonResponse($data, $data['status']);
+    ): Response {
+        $this->noteService->unpinTag($noteId, $tagId);
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 
     #[Route('/api/note/{noteId}/tag/{tagId}', name: 'append_tag', methods: ['POST'])]
     public function appendTag(
         int $noteId,
         int $tagId,
-        NoteRepository $noteRepository,
-        TagRepository $tagRepository,
-        NoteTagRepository $noteTagRepository,
-        EntityManagerInterface $entityManager
-    ): JsonResponse {
-        $note = $noteRepository->find($noteId);
-        $tag = $tagRepository->find($tagId);
-        if ($noteTagRepository->count(['note' => $note, 'tag' => $tag]) == 0) {
-            $noteTag = new NoteTag();
-            $noteTag->setNote($note);
-            $noteTag->setTag($tag);
-            $entityManager->persist($noteTag);
-            $entityManager->flush();
-
-            $data = [
-                'status' => Response::HTTP_OK,
-                'success' => 'Tag is successfully added to note',
-            ];
-        } else {
-            $data = [
-                'status' => Response::HTTP_BAD_REQUEST,
-                'error' => 'Relation has already existed',
-            ];
-        }
-        return new JsonResponse($data, $data['status']);
+    ): Response {
+        $this->noteService->pinTag($noteId, $tagId);
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 
     #[Route('/api/note/{id}/tags', name: 'list_note_tags', methods: ['GET'])]
-    public function listTags(int $id, NoteTagRepository $noteTagRepository): JsonResponse
+    public function listTags(int $id): JsonResponse
     {
-        $noteTags = $noteTagRepository->findBy(['note' => $id]);
-        $tags = array_map(function (NoteTag $noteTag) {
-            return $noteTag->getTag();
-        }, $noteTags);
+        $tags = $this->noteService->listNoteTags($id);
         return $this->json($tags, Response::HTTP_OK);
     }
 
     #[Route('/api/notes', name: 'list_notes', methods: ['GET'])]
-    public function listNotes(#[CurrentUser] ?User $user, NoteRepository $noteRepository, NoteAccessLogRepository $noteAccessLogRepository): JsonResponse
+    public function listNotes(#[CurrentUser] ?User $user): JsonResponse
     {
-        $notes = $user->getNotes()->toArray();
-        $sortedNotes = $noteAccessLogRepository->sort($notes);
-        return $this->json($sortedNotes, Response::HTTP_OK);
+        try {
+            $notes = $this->noteService->listNotes($user);
+            return $this->json($notes, Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return $this->json($e, Response::HTTP_METHOD_NOT_ALLOWED);
+        }
     }
 
     #[Route('/api/note/{id}', name: 'get_note', methods: ['GET'])]
-    public function getNote(int $id, NoteRepository $noteRepository, EntityManagerInterface $em): JsonResponse
+    public function getNote(int $id): JsonResponse
     {
-        $note = $noteRepository->find($id);
-
-        $noteAccess = new NoteAccessLog();
-        $noteAccess->setNoteId($note);
-        $noteAccess->setAccessDate(new DateTimeImmutable());
-
-        $em->persist($noteAccess);
-        $em->flush();
-
+        $note = $this->noteService->accessNote($id);
         return $this->json($note, Response::HTTP_OK);
     }
 
     #[Route('/api/note/{id}', name: 'delete_note', methods: ['DELETE'])]
-    public function deleteNote(int $id, NoteRepository $noteRepository, EntityManagerInterface $entityManager): JsonResponse
+    public function deleteNote(int $id): Response
     {
-        $note = $noteRepository->find($id);
-        $entityManager->remove($note);
-        $entityManager->flush();
-
-        $data = [
-            'status' => Response::HTTP_OK,
-            'success' => 'Note is successfully deleted',
-        ];
-        return new JsonResponse($data, $data['status']);
+        $this->noteService->deleteNote($id);
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 
     #[Route('/api/note/{id}', name: 'edit_note', methods: ['POST'])]
     public function editNote(
         int $id,
         Request $request,
-        NoteRepository $noteRepository,
-        EntityManagerInterface $entityManager
     ): JsonResponse {
-        try {
-            $data = json_decode($request->getContent(), true);
-
-            $note = $noteRepository->find($id);
-            if (null === $note) {
-                return $this->json("Note with id '$id' not found.", Response::HTTP_NOT_FOUND);
-            }
-
-            if (array_key_exists('title', $data)) {
-                $note->setTitle($data['title']);
-            }
-
-            if (array_key_exists('content', $data)) {
-                $note->setContent($data['content']);
-            }
-
-            $entityManager->persist($note);
-            $entityManager->flush();
-
-            return $this->json($note, Response::HTTP_OK);
-        } catch (\Exception $e) {
-            return $this->json("$e", Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        $data = json_decode($request);
+        $note = $this->noteService->editNote($id, $data['title'], $data['content']);
+        return $this->json($note, Response::HTTP_OK);
     }
 
     #[Route('/api/note', name: 'create_note', methods: ['POST'])]
-    public function createNote(Request $request, NoteService $noteService, #[CurrentUser] ?User $user): JsonResponse
-    {
-        try {
-            $data = json_decode($request->getContent(), true);
-            $note = $noteService->createNote($data, $user);
-            return $this->json($note);
-        } catch (\Exception $e) {
-            return $this->json($e, Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+    public function createNote(
+        Request $request,
+        #[CurrentUser] ?User $user
+    ): JsonResponse {
+        $data = json_decode($request->getContent(), true);
+        $note = $this->noteService->createNote($data, $user);
+        return $this->json($note);
     }
 }
