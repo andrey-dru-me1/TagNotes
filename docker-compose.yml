@@ -4,13 +4,14 @@ services:
       file: common-services.yml
       service: nginx
     profiles: [prod]
-    depends_on: react-prod
+    depends_on: [react-prod]
   nginx-dev:
     extends:
       file: common-services.yml
       service: nginx
     profiles: [dev]
-    depends_on: react-dev
+    depends_on: [react-dev]
+
   react-prod:
     extends:
       file: common-services.yml
@@ -23,6 +24,7 @@ services:
       service: react
     profiles: [dev]
     command: npm run dev
+
   migration:
     build: backend
     command: bin/console --no-interaction doctrine:migrations:migrate
@@ -32,17 +34,22 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/root/backend
-  fpm:
-    build: backend
-    container_name: tagnotes_fpm
-    volumes:
-      - ./backend:/var/www/html:cached
-      - ./config/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
-    depends_on:
-      migration:
-        condition: service_completed_successfully
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+
+  fpm-prod:
+    profiles: [prod]
+    extends:
+      file: common-services.yml
+      service: fpm
+    environment:
+      - APP_ENV=prod
+  fpm-dev:
+    profiles: [dev]
+    extends:
+      file: common-services.yml
+      service: fpm
+    environment:
+      - APP_ENV=dev
+
   pgadmin:
     image: dpage/pgadmin4
     volumes:
@@ -53,6 +60,7 @@ services:
     depends_on:
       migration:
         condition: service_completed_successfully
+
   postgres:
     image: postgres:latest
     container_name: tagnotes_postgres
