@@ -51,7 +51,7 @@ class TagController extends AbstractController
     return new Response("", Response::HTTP_NO_CONTENT);
   }
 
-  #[Route("/api/tag", name: "create_tag", methods: ["POST"])]
+  #[Route("/api/tag", name: "create_tag", methods: ["PUT"])]
   public function createTag(Request $request): JsonResponse
   {
     $data = json_decode($request);

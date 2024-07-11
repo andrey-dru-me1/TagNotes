@@ -44,7 +44,7 @@ class UserController extends AbstractController
     return $this->json($userRepository->findAll());
   }
 
-  #[Route("/api/signup", name: "signup", methods: ["POST"])]
+  #[Route("/api/signup", name: "signup", methods: ["PUT"])]
   public function signUp(Request $request): JsonResponse
   {
     $data = json_decode($request, true);

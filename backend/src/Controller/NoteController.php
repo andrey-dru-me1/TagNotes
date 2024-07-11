@@ -91,7 +91,7 @@ class NoteController extends AbstractController
     return $this->json($note, Response::HTTP_OK);
   }
 
-  #[Route("/api/note", name: "create_note", methods: ["POST"])]
+  #[Route("/api/note", name: "create_note", methods: ["PUT"])]
   public function createNote(
     Request $request,
     #[CurrentUser] ?User $user

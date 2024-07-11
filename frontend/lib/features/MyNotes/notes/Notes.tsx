@@ -48,7 +48,7 @@ export default function NotesComponent() {
 
   const onAddNoteClick = () => {
     api
-      .post("/note", { title: "Untitled", content: "" })
+      .put("/note", { title: "Untitled", content: "" })
       .then((response) => {
         console.log(response);
         const note: Note = response.data;

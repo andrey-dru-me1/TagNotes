@@ -10,7 +10,7 @@ export default function SignupComponent() {
 
   const handleClick = () => {
     axios({
-      method: "post",
+      method: "put",
       url: "/api/signup",
       data: { name: username, password: password },
       headers: { "Content-Type": "application/json" },
@@ -21,7 +21,7 @@ export default function SignupComponent() {
           url: "/api/login",
           data: { name: username, password: password },
           headers: { "Content-Type": "application/json" },
-        }).then(() => (window.location.href = "/notes"))
+        }).then(() => (window.location.href = "/notes")),
       )
       .catch((e) => console.log(e));
   };

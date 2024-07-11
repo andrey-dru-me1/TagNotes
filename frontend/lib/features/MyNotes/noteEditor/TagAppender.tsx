@@ -93,7 +93,7 @@ export default function TagAppender({ note }: { note: Note | null }) {
         ></TextField>
         <Button
           onClick={() => {
-            api.post("/tag", { name: newTagName }).then((response) => {
+            api.put("/tag", { name: newTagName }).then((response) => {
               const newTag: Tag = response.data;
               pinTag(newTag.id);
               getPossibleTags();
