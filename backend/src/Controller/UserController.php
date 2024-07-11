@@ -32,7 +32,7 @@ class UserController extends AbstractController
   }
 
   #[Route("/api/user/{id}", name: "delete_user", methods: ["DELETE"])]
-  public function deleteUser(int $id): JsonResponse
+  public function deleteUser(int $id): Response
   {
     $this->userService->deleteUser($id);
     return new Response("", Response::HTTP_NO_CONTENT);
