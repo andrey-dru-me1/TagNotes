@@ -124,7 +124,9 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,phpstorm,visualstudiocode
 
-# Database storage
 data
 pgadmin
 .vscode
+/package*.json
+/node_modules
+.prettierrc
