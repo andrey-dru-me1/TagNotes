@@ -27,7 +27,9 @@ services:
 
   migration:
     build: backend
-    command: bin/console --no-interaction doctrine:migrations:migrate
+    command: bash -c
+      "bin/console --env prod --no-interaction doctrine:migrations:migrate
+      && bin/console --env prod cache:clear"
     working_dir: /root/backend
     depends_on:
       postgres:
