@@ -39,7 +39,7 @@ class TagController extends AbstractController
   #[Route("/api/tag/{id}", name: "edit_tag", methods: ["POST"])]
   public function editTag(int $id, Request $request): JsonResponse
   {
-    $data = json_decode($request);
+    $data = json_decode($request->getContent(), true);
     $tag = $this->tagService->editTag($id, $data["name"]);
     return $this->json($tag);
   }
@@ -54,7 +54,7 @@ class TagController extends AbstractController
   #[Route("/api/tag", name: "create_tag", methods: ["PUT"])]
   public function createTag(Request $request): JsonResponse
   {
-    $data = json_decode($request);
+    $data = json_decode($request->getContent(), true);
     $tag = $this->tagService->createTag($data["name"]);
     return $this->json($tag, Response::HTTP_CREATED);
   }

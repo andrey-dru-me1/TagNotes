@@ -86,8 +86,8 @@ class NoteController extends AbstractController
   #[Route("/api/note/{id}", name: "edit_note", methods: ["POST"])]
   public function editNote(int $id, Request $request): JsonResponse
   {
-    $data = json_decode($request);
-    $note = $this->noteService->editNote($id, $data["title"], $data["content"]);
+    $data = json_decode($request->getContent());
+    $note = $this->noteService->editNote($id, $data->title, $data->content);
     return $this->json($note, Response::HTTP_OK);
   }
 

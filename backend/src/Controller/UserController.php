@@ -47,7 +47,7 @@ class UserController extends AbstractController
   #[Route("/api/signup", name: "signup", methods: ["PUT"])]
   public function signUp(Request $request): JsonResponse
   {
-    $data = json_decode($request, true);
+    $data = json_decode($request->getContent(), true);
     $user = $this->userService->createUser($data["name"], $data["password"]);
     return $this->json($user, Response::HTTP_CREATED);
   }
